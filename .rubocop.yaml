@@ -1,0 +1,10 @@
+# require:
+#   - rubocop-rspec
+#   - rubocop-performance
+#   - rubocop-thread_safety
+#   - rubocop-sequel
+#   - rubocop-rake
+
+AllCops:
+  NewCops: enable
+  TargetRubyVersion: 3.3
