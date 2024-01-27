@@ -17,15 +17,13 @@ module Routes
       end
 
       r.post do
-        payload = r.params['user']
-
-        contract = Contracts::User::Create.new.call(payload)
-        raise Contracts::ValidationError.new(contract) unless contract.success?
-
-        user = User.new(contract.to_h)
-        user.save
+        result = Interactors::Users::Create.call(r)
         response.status = 201
-        Serializers::User.render(user, root: :user, meta: { link: user.to_link })
+        if result.is_a? Array
+          Serializers::User.render(result, root: :users, meta: { count: result.size })
+        else
+          Serializers::User.render(result, root: :user, meta: { link: result.to_link })
+        end
       end
     end
   end
