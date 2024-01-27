@@ -1,19 +1,20 @@
 # Warehouse06
 
 #### Run
-Fire docker compose to start server:
+Create `.env` file using .env_test as a template. Or just copy it.
+Fire docker compose up to start app and postgres servers:
 ```bash
 docker compose up
 ```
 
-Make some request to create:
+Make some requests to create user record:
 ```bash
 curl -H 'Content-Type: application/json' \
      -X POST \
      -d '{"user":{"name":"test","email":"test@example.com","password":"pass"}}'
      localhost:3000/users
 ```
-to show all created records:
+or to show all created records:
 ```bash
 curl -H 'Content-Type: application/json' localhost:3000/users
 ```
@@ -21,12 +22,17 @@ or exact one:
 ```bash
 curl -H 'Content-Type: application/json' localhost:3000/users/1
 ```
-And system one feature:
+And system one feature, in praise of healthchecks:
 ```bash
 curl -H 'Content-Type: application/json' localhost:3000/ping
 ```
 
 #### TODO
 - Add environments
-- Add specs and Guard
 - Add swagger
+- Add documentation
+- Add specs and Guard
+- Add hot reloading in development env
+- Move to falcon
+- Add auth
+- Harden validations

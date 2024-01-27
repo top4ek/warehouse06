@@ -3,5 +3,4 @@
 require 'json'
 require 'blueprinter'
 
-require_relative 'serializers/base'
 require_relative 'serializers/user'
