@@ -11,7 +11,7 @@ Make some requests to create user record:
 ```bash
 curl -H 'Content-Type: application/json' \
      -X POST \
-     -d '{"user":{"name":"test","email":"test@example.com","password":"pass"}}'
+     -d '{"user":{"name":"test","email":"test@example.com","password":"pass"}}' \
      localhost:3000/users
 ```
 or to show all created records:
