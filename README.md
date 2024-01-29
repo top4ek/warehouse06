@@ -2,7 +2,7 @@
 
 #### Run
 Create `.env` file using .env_test as a template. Or just copy it.
-Fire docker compose up to start app and postgres servers:
+Fire up `docker compose up` to start app and postgres servers:
 ```bash
 docker compose up
 ```
