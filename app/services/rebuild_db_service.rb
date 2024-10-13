@@ -17,7 +17,7 @@ class RebuildDbService
       parent = Directory.find_or_create(parent_id: nil, key: 'root')
       f[:path].each_with_index do |key, idx|
         if idx == size
-          if key == 'index.md'
+          if key == 'README.md'
             data = FrontMatterParser::Parser.parse_file(f[:file])
             parent.update(name: data.front_matter['name'], description: data.content)
           else

@@ -1,2 +1,2 @@
-.ruby-lsp
 .env
+!.tmp/.keep

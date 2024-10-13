@@ -24,8 +24,8 @@ links:
 
 ЗБ — рестарт уровня
 
-Игра [Дениса Грачева](/authors/dgrachev)
+Игра [Дениса Грачева](../../authors/dgrachev)
 
-Музыка [Олега Никитина](/authors/onikitin)
+Музыка [Олега Никитина](../../authors/onikitin)
 
-Тестировал [Артёмка Васильев](/authors/avasiliev)
+Тестировал [Артёмка Васильев](../../authors/avasiliev)
