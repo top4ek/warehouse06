@@ -6,16 +6,15 @@ gem 'blueprinter'
 
 gem 'puma'
 gem 'roda'
+gem 'slim'
 
-gem 'pg'
 gem 'sequel'
+gem 'sqlite3'
+
+gem 'commonmarker'
+gem 'front_matter_parser'
+gem 'github-markup'
 
 gem 'dry-validation'
 
-# gem 'debug'
-# gem 'rubocop'
-# gem 'rubocop-performance'
-# gem 'rubocop-rake'
-# gem 'rubocop-rspec'
-# gem 'rubocop-sequel'
-# gem 'rubocop-thread_safety'
+gem 'debug'

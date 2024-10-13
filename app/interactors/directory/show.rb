@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Interactors
-  module Users
+  module Directory
     class Create
       class << self
         def call(request)

@@ -2,9 +2,10 @@
 
 module Routes
   class Base < Roda
+    plugin :common_logger
+    # plugin :environments
     plugin :json
     plugin :json_parser
-    plugin :common_logger
     plugin :error_handler do |e|
       payload = { type: e.class.to_s }
       case e
@@ -21,6 +22,8 @@ module Routes
         puts e.backtrace
         response.status = 500
         payload[:error] = 'O-oh!'
+        # payload[:inspect] = e.inspect
+        # payload[:backtrace] = e.backtrace
       end
       response.write payload.to_json
     end
