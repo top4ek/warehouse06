@@ -3,19 +3,23 @@
 Sequel.migration do
   up do
     # , using: 'fts5(description, name, key
-    create_table(:directories) do
+    create_table(:nodes) do
       primary_key :id
-      foreign_key :parent_id, :directories
 
-      String :key, null: false, size: 64
+      String :path, null: true
       String :name, null: true, size: 64
       String :description, null: true, text: true
-
+      BigDecimal :size, null: true
+      String :digest, null: true, size: 64
       Date :date, null: true
+      BigDecimal parent_idj
+
+      index :id, unique: true
+      index :path, unique: true
     end
   end
 
   down do
-    drop_table(:directories)
+    drop_table(:nodes)
   end
 end

@@ -1,4 +1,3 @@
 # frozen_string_literal: true
 
-require_relative 'interactors/directory'
-require_relative 'interactors/document'
+require_relative 'interactors/nodes'

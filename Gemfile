@@ -11,10 +11,10 @@ gem 'slim'
 gem 'sequel'
 gem 'sqlite3'
 
-gem 'commonmarker'
 gem 'front_matter_parser'
-gem 'github-markup'
+gem 'redcarpet'
 
+gem 'dry-monads'
 gem 'dry-validation'
 
 gem 'debug'

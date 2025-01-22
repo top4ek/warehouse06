@@ -5,5 +5,4 @@ Sequel::Model.default_set_fields_options[:missing] = :skip
 
 require_relative 'models/tag'
 require_relative 'models/tagging'
-require_relative 'models/directory'
-require_relative 'models/document'
+require_relative 'models/node'

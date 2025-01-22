@@ -2,6 +2,8 @@
 
 require 'debug'
 
+require 'dry/monads'
+
 require './config/extensions/array/wrap'
 require './config/database'
 require './app/contracts'
