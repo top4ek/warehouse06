@@ -2,9 +2,9 @@
 
 require 'roda'
 
-require_relative 'routes/base'
-require_relative 'routes/api'
-require_relative 'routes/web'
+# require_relative 'routes/base' # Removed by Zeitwerk integration
+# require_relative 'routes/api' # Removed by Zeitwerk integration
+# require_relative 'routes/web' # Removed by Zeitwerk integration
 
 class Application < Routes::Base
   route do |r|

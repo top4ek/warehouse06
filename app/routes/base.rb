@@ -1,5 +1,6 @@
 # app/routes/base.rb
 require 'roda' # Ensure Roda is required
+# Removed: require 'roda/plugins/code_reloader'
 
 module Routes
   class Base < Roda
@@ -40,33 +41,7 @@ module Routes
       response.write payload.to_json
     end
 
-
-    # Add the code_reloader plugin for development environment
-    if ENV['RACK_ENV'] == 'development'
-      plugin :code_reloader
-      # Configure directories to watch if needed by the plugin.
-      # By default, it might watch the directory of the app file and subdirectories.
-      # Explicitly watch key directories:
-      # also_reload 'app/models', 'app/services', 'app/interactors', 'app/routes', 'app/serializers', 'app/contracts', 'config'
-      # Roda's code_reloader might be simpler, often just needs to be enabled.
-      # It typically reloads files under the app directory and the main app file itself.
-      # Let's start with just enabling it and see if it picks up changes in `app/`.
-      # If specific configuration like `also_reload` or `dont_reload` is needed,
-      # it can be added later.
-      # Some versions might use: `plugin :code_reloader, watch_subdirs: true`
-
-      # For Roda, common usage is to just enable it and it watches the app file's dir.
-      # To watch additional directories, you might need to configure `self.opts[:code_reloader_watch_subdirs]`
-      # or use `Dir.glob` with `also_reload`.
-      # Let's try a common approach for Roda's built-in reloader:
-      # It often reloads constants.
-      # We may need to specify what to reload or how.
-      # A simple `plugin :code_reloader` might be enough to get started.
-      # The plugin might also need `require 'roda/plugins/code_reloader'` if not auto-loaded.
-      
-      # Let's assume Roda can autoload its plugins if they are part of its core.
-      # If not, an explicit require might be needed at the top of the file.
-    end
+    # Removed the code_reloader plugin block for development environment
 
     # ... rest of the class (e.g., route block if this is a base app) ...
     # If this Base class is not run directly but subclassed by Web and Api,

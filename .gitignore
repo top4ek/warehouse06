@@ -13,3 +13,6 @@
 .bundle/
 coverage/
 *.log
+
+# RSpec/Test related
+/spec/examples.txt

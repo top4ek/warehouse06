@@ -3,4 +3,4 @@
 require 'json'
 require 'blueprinter'
 
-require_relative 'serializers/node'
+# require_relative 'serializers/node' # Removed by Zeitwerk integration
