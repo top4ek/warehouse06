@@ -15,7 +15,7 @@ module Routes
       #   view('root')
       # end
 
-      result = Documents::Show.call(r)
+      result = Nodes::Show.call(r) # Changed Documents::Show to Nodes::Show
       result in status:, body:, title:, data:, path:
       response.status = status
       @title = title

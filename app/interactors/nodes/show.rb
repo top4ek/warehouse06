@@ -8,20 +8,20 @@ module Nodes
       include Dry::Monads[:result]
 
       def call(request)
-        doc = document(request.path)
-        return Failure(status: 404) if doc&.id.nil?
+        node_record = document(request.path) # Renamed doc to node_record for clarity
+        return Failure(status: 404) if node_record&.id.nil?
 
-        result = { status: 200, title: doc.name, data: true, path: doc.path }
+        result = { status: 200, title: node_record.name, data: true, path: node_record.path }
 
-        if doc&.description.nil?
-          result[:body] = Pathname(Dir.pwd).join('storage', doc.path)
+        if node_record&.description.nil?
+          result[:body] = Pathname(Dir.pwd).join('storage', node_record.path)
         else
           result[:data] = false
           renderer = Redcarpet::Render::HTML.new(filter_html: true)
           result[:body] = Redcarpet::Markdown.new(renderer,
                                                   autolink: true,
                                                   tables: true)
-                                             .render(doc.description)
+                                             .render(node_record.description)
         end
         Success(result.compact)
       end
@@ -31,7 +31,7 @@ module Nodes
       def document(request_path)
         base = request_path.split('/').reject(&:empty?)
         path = [base, base + ['README.md']].map { it.join('/') }
-        Document.where(path:).first
+        Node.where(path:).first # Changed Document to Node
       end
     end
   end

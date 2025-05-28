@@ -11,11 +11,16 @@ class RebuildDbService
   end
 
   def call
+    processed_count = 0
     Find.find(@data_root).each do |f|
       Pathname.new(f)
               .relative_path_from(@data_root)
-              .descend { NodeCreator.new(@data_root.join(it)).call }
+              .descend do |it|
+                NodeCreator.new(@data_root.join(it)).call
+                processed_count += 1
+              end
     end
+    processed_count
   end
 
   private
@@ -24,6 +29,6 @@ class RebuildDbService
     puts('Cleaning database.')
     Tagging.dataset.delete
     Tag.dataset.delete
-    Document.dataset.delete
+    Node.dataset.delete # Changed from Document.dataset.delete
   end
 end
