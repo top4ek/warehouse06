@@ -19,9 +19,14 @@ gem 'dry-validation'
 
 gem 'debug'
 
-gem 'dotenv', groups: [:development, :test]
+group :development, :test do
+  gem 'dotenv' # Was already in :development, :test
+  gem 'guard'
+  gem 'guard-rspec', require: false
+end
 
 group :test do
   gem 'rspec'
   gem 'rack-test' # For testing Roda routes
+  gem 'factory_bot'
 end

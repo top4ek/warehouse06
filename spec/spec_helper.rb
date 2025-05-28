@@ -12,9 +12,17 @@ require 'rack/test' # For testing Roda applications
 # Since config.ru loads everything, let's try that.
 require File.expand_path('../config.ru', __dir__)
 
+require 'factory_bot' # Added for FactoryBot
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods # Provides methods like get, post, last_response
+
+  # FactoryBot configuration
+  config.include FactoryBot::Syntax::Methods
+
+  config.before(:suite) do
+    FactoryBot.find_definitions # Auto-discover factories
+  end
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
