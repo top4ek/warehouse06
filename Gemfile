@@ -19,4 +19,4 @@ gem 'dry-validation'
 
 gem 'debug'
 
-gem 'dotenv', groups: [:development, :test] # Changed from dotenv-rails
+gem 'dotenv', groups: [:development, :test]
