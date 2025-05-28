@@ -10,6 +10,7 @@ gem 'slim'
 
 gem 'sequel'
 gem 'sqlite3'
+gem 'zeitwerk' # Added as a direct dependency
 
 gem 'front_matter_parser'
 gem 'redcarpet'
