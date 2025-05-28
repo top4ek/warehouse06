@@ -1,23 +1,15 @@
+# config.ru
 # frozen_string_literal: true
 
-require 'bundler/setup'
-ENV['RACK_ENV'] ||= 'development'
-Bundler.require(:default, ENV['RACK_ENV'].to_sym)
-require 'dotenv/load'
+# ENV['RACK_ENV'] will be set to 'development' by default inside 'config/environment.rb' if not already set.
+# Remove explicit ENV['RACK_ENV'] and Bundler/dotenv lines if they are now fully handled by environment.rb
+require_relative './config/environment'
 
-require 'debug'
-
-require 'dry/monads'
-
-require './config/extensions/array/wrap'
-require './config/database'
-require './app/contracts'
-require './app/services'
-require './app/interactors'
-require './app/routes'
-require './app/serializers'
-require './app/models'
-
+# Original lines specific to config.ru (after loading the app environment)
+# Make sure RebuildDbService is loaded via config/environment.rb if it's still needed here.
+# If RebuildDbService.new.call is for initial setup, consider if it should run every time the app starts,
+# or only in specific environments (e.g., development).
+# For now, keeping it as it was.
 RebuildDbService.new.call
 
 run Application

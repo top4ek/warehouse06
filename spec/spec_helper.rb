@@ -1,28 +1,29 @@
 # spec/spec_helper.rb
-ENV['RACK_ENV'] = 'test' # Ensure all tests run in the test environment
+ENV['RACK_ENV'] = 'test' # CRITICAL: Set RACK_ENV to 'test' BEFORE loading environment
 
-require 'bundler/setup' # Sets up load paths from Gemfile
-# No Bundler.require here, RSpec will require gems as needed or they are required by app
+# If .env files are not loaded automatically by Bundler/dotenv setup for test env,
+# ensure .env.test is loaded. 'dotenv/load' handles this well.
+# This needs to happen after RACK_ENV is set to 'test' and before 'config/environment'
+# might try to load a different .env file based on a default RACK_ENV.
+require 'dotenv/load'
 
-require 'rack/test' # For testing Roda applications
+# Load the application using the new central environment file
+require_relative '../config/environment'
 
-# Adjust the path as necessary to load your application's main file or config.ru
-# This assumes your application can be loaded by requiring config.ru
-# or a specific app file. For Roda, often it's the file defining the App class.
-# Since config.ru loads everything, let's try that.
-require_relative '../config.ru' # MODIFIED LINE
-
-require 'factory_bot' # Added for FactoryBot
+require 'rack/test'
+require 'factory_bot'
 
 RSpec.configure do |config|
-  config.include Rack::Test::Methods # Provides methods like get, post, last_response
-
-  # FactoryBot configuration
+  config.include Rack::Test::Methods
   config.include FactoryBot::Syntax::Methods
 
   config.before(:suite) do
-    FactoryBot.find_definitions # Auto-discover factories
+    FactoryBot.find_definitions
   end
+
+  # config.around(:each) do |example|
+  #   DB.transaction(rollback: :always, auto_savepoint: true) { example.run }
+  # end
 
   config.expect_with :rspec do |expectations|
     expectations.include_chain_clauses_in_custom_matcher_descriptions = true
@@ -42,23 +43,10 @@ RSpec.configure do |config|
     config.default_formatter = "doc"
   end
 
-  # config.profile_examples = 10 # Uncomment to show slow examples
   config.order = :random
   Kernel.srand config.seed
-  
-  # Add any other RSpec configurations here.
-  # For example, database cleaning strategies if you were using a persistent test DB.
-  # config.before(:suite) do
-  #   # Setup tasks, e.g., DB cleaning
-  # end
-  # config.around(:each) do |example|
-  #   # DB transaction wrapping
-  #   DB.transaction(rollback: :always, auto_savepoint: true) { example.run }
-  # end
 end
 
-# Helper method to get the Roda application instance for Rack::Test
-# This might need to be adjusted based on how Application is defined and run in config.ru
 def app
-  Application # Assuming 'Application' is the class name of your Roda app
+  Application # Assuming 'Application' is defined after loading 'config/environment.rb'
 end
