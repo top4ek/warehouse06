@@ -24,6 +24,7 @@ group :development, :test do
   gem 'dotenv' # Was already in :development, :test
   gem 'guard'
   gem 'guard-rspec', require: false
+  gem 'rerun' # Added rerun here
 end
 
 group :test do
