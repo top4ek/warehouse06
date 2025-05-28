@@ -20,3 +20,8 @@ gem 'dry-validation'
 gem 'debug'
 
 gem 'dotenv', groups: [:development, :test]
+
+group :test do
+  gem 'rspec'
+  gem 'rack-test' # For testing Roda routes
+end
