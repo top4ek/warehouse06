@@ -8,11 +8,8 @@ Bundler.require(:default, ENV['RACK_ENV'].to_sym)
 # If RACK_ENV is 'test' (set by spec_helper), this will load .env.test.
 require 'dotenv/load'
 
-# Define project_root correctly. Since this file is in <project_root>/config,
-# File.expand_path('..', __dir__) gives the 'config' directory.
-# So, we go one level up from there to get the actual project root.
-config_directory = File.expand_path('..', __dir__)
-project_root = File.expand_path('..', config_directory)
+# Define project_root as the directory containing this file (config directory).
+project_root = File.expand_path('..', __dir__) # Corrected definition as per instruction
 
 # --- Files that need to be loaded before Zeitwerk ---
 # Extensions, initializers, or configurations that don't follow Zeitwerk's conventions
