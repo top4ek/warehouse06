@@ -10,7 +10,7 @@ require 'rack/test' # For testing Roda applications
 # This assumes your application can be loaded by requiring config.ru
 # or a specific app file. For Roda, often it's the file defining the App class.
 # Since config.ru loads everything, let's try that.
-require File.expand_path('../config.ru', __dir__)
+require_relative '../config.ru' # MODIFIED LINE
 
 require 'factory_bot' # Added for FactoryBot
 
