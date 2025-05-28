@@ -64,7 +64,7 @@ module Routes
             nodes = ::Node.where(Sequel.ilike(:name, search_term) | Sequel.ilike(:description, search_term)).all
             response.status = 200
           end
-          Serializers::Node.render_as_json(nodes)
+          Serializers::Node.render(nodes)
         end
       end
     end
