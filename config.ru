@@ -1,8 +1,13 @@
 # frozen_string_literal: true
 
-require 'debug'
+require 'bundler/setup' # Added
+ENV['RACK_ENV'] ||= 'development' # Added - Default RACK_ENV
+Bundler.require(:default, ENV['RACK_ENV'].to_sym) # Added - Load gems
+require 'dotenv/load' # Load .env files after gems are required
 
-require 'dry/monads'
+require 'debug' # This was originally here, keep it after Bundler.require
+
+require 'dry/monads' # This was originally here
 
 require './config/extensions/array/wrap'
 require './config/database'
