@@ -12,7 +12,7 @@ Sequel.migration do
       BigDecimal :size, null: true
       String :digest, null: true, size: 64
       Date :date, null: true
-      BigDecimal :parent_id, null: true # Corrected line
+      BigDecimal :parent_id, null: true
 
       index :id, unique: true
       index :path, unique: true

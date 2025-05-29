@@ -10,7 +10,7 @@ gem 'slim'
 
 gem 'sequel'
 gem 'sqlite3'
-gem 'zeitwerk' # Added as a direct dependency
+gem 'zeitwerk'
 
 gem 'front_matter_parser'
 gem 'redcarpet'
@@ -21,14 +21,13 @@ gem 'dry-validation'
 gem 'debug'
 
 group :development, :test do
-  gem 'dotenv' # Was already in :development, :test
+  gem 'dotenv'
   gem 'guard'
   gem 'guard-rspec', require: false
-  gem 'rerun' # Added rerun here
 end
 
 group :test do
   gem 'rspec'
-  gem 'rack-test' # For testing Roda routes
+  gem 'rack-test'
   gem 'factory_bot'
 end

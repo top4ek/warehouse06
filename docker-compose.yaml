@@ -20,4 +20,3 @@ services:
       start_period: 5s
     ports:
       - 3000:3000
-    command: bundle exec rerun -- bundle exec puma # Added this line

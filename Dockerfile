@@ -1,4 +1,4 @@
-FROM ruby:3.4.1-alpine3.21
+FROM ruby:3.4.4-alpine
 
 EXPOSE 3000
 WORKDIR /opt
@@ -11,7 +11,7 @@ RUN addgroup -g ${CONTAINER_GID} app && \
   chown -R app:app /opt && \
   chmod -R 0775 /opt
 
-RUN apk add --no-cache --update sqlite-dev git build-base ca-certificates less tzdata make libffi-dev libxml2 libxml2-dev libxslt-dev
+RUN apk add --no-cache --update sqlite-dev git build-base ca-certificates less tzdata make libffi-dev libxml2 libxml2-dev libxslt-dev yaml-dev
 
 USER app:app
 

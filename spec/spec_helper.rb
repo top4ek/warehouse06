@@ -1,13 +1,9 @@
-# spec/spec_helper.rb
-ENV['RACK_ENV'] = 'test' # CRITICAL: Set RACK_ENV to 'test' BEFORE loading environment
+# frozen_string_literal: true
 
-# If .env files are not loaded automatically by Bundler/dotenv setup for test env,
-# ensure .env.test is loaded. 'dotenv/load' handles this well.
-# This needs to happen after RACK_ENV is set to 'test' and before 'config/environment'
-# might try to load a different .env file based on a default RACK_ENV.
+ENV['RACK_ENV'] = 'test'
+
 require 'dotenv/load'
 
-# Load the application using the new central environment file
 require_relative '../config/environment'
 
 require 'rack/test'
@@ -48,5 +44,5 @@ RSpec.configure do |config|
 end
 
 def app
-  Application # Assuming 'Application' is defined after loading 'config/environment.rb'
+  Routes::Base
 end

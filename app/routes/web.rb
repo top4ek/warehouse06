@@ -11,11 +11,7 @@ module Routes
     plugin :sinatra_helpers
 
     route do |r|
-      # r.root do
-      #   view('root')
-      # end
-
-      result = Nodes::Show.call(r) # Changed Documents::Show to Nodes::Show
+      result = Nodes::Show.call(r)
       result in status:, body:, title:, data:, path:
       response.status = status
       @title = title
