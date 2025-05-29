@@ -18,16 +18,18 @@ gem 'redcarpet'
 gem 'dry-monads'
 gem 'dry-validation'
 
-gem 'debug'
-
 group :development, :test do
+  gem 'debug'
   gem 'dotenv'
+  gem 'factory_bot'
   gem 'guard'
   gem 'guard-rspec', require: false
-end
-
-group :test do
-  gem 'rspec'
   gem 'rack-test'
-  gem 'factory_bot'
+  gem 'rspec'
+  gem 'rubocop'
+  gem 'rubocop-performance'
+  gem 'rubocop-rake'
+  gem 'rubocop-rspec'
+  gem 'rubocop-sequel'
+  gem 'rubocop-thread_safety'
 end
