@@ -3,7 +3,9 @@
 require 'sequel'
 require 'logger'
 
-Database = Sequel.sqlite(ENV['DATABASE_NAME'] || ':memory:', logger: Logger.new($stderr))
+logger = ENV['RACK_ENV'] == 'development' ? Logger.new($stderr) : nil
+
+Database = Sequel.sqlite(ENV['DATABASE_NAME'] || ':memory:', logger:)
 
 Sequel.extension :migration
 Sequel::Migrator.run(Database, 'config/migrations', use_transactions: true)

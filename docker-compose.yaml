@@ -1,7 +1,9 @@
 services:
-  app:
+  guard: &guard
     tty: true
     stdin_open: true
+    environment:
+      RACK_ENV: test
     build:
       context: .
       args:
@@ -10,13 +12,20 @@ services:
     restart: unless-stopped
     user: $CONTAINER_UID:$CONTAINER_GID
     env_file: .env
+    command: "bundle exec guard"
     volumes:
       - ./:/opt/
+
+  app:
+    <<: *guard
+    environment:
+      RACK_ENV: development
     healthcheck:
       test: ["CMD", "curl", "-f", "-o", "/dev/null", "http://127.0.0.1:3000/api/ping"]
       interval: 10s
       timeout: 5s
       retries: 6
       start_period: 5s
+    # command: "bundle exec puma"
     ports:
       - 3000:3000

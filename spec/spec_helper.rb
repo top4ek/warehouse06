@@ -2,12 +2,12 @@
 
 ENV['RACK_ENV'] = 'test'
 
-require 'dotenv/load'
-
 require_relative '../config/environment'
 
 require 'rack/test'
 require 'factory_bot'
+
+require 'support/shared_examples'
 
 RSpec.configure do |config|
   config.include Rack::Test::Methods
@@ -15,6 +15,9 @@ RSpec.configure do |config|
 
   config.before(:suite) do
     FactoryBot.find_definitions
+    FactoryBot.define do
+      to_create(&:save)
+    end
   end
 
   # config.around(:each) do |example|

@@ -3,6 +3,8 @@
 require 'spec_helper'
 
 RSpec.describe Node, type: :model do
+  it_behaves_like "a model with factory"
+
   describe '#type' do
     context 'when the node has a digest (is a file)' do
       let(:file_node) { Node.new(digest: 'somesha256digest') }

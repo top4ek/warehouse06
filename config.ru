@@ -3,6 +3,6 @@
 
 require_relative './config/environment'
 
-RebuildDbService.new.call
+# RebuildDbService.new.call
 
 run Routes::Base

@@ -20,9 +20,9 @@ gem 'dry-validation'
 
 group :development, :test do
   gem 'debug'
-  gem 'dotenv'
   gem 'factory_bot'
   gem 'guard'
+  gem 'guard-puma'
   gem 'guard-rspec', require: false
   gem 'rack-test'
   gem 'rspec'

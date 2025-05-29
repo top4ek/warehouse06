@@ -5,8 +5,6 @@ ENV['RACK_ENV'] ||= 'development'
 require 'bundler/setup'
 Bundler.require(:default, ENV['RACK_ENV'].to_sym)
 
-require 'dotenv/load'
-
 project_root = File.expand_path('..', __dir__)
 
 require File.join(project_root, 'config/extensions/array/wrap.rb')
@@ -27,7 +25,7 @@ app_subdirs_to_collapse.each do |subdir|
   loader.collapse(dir_path) if Dir.exist?(dir_path)
 end
 
-loader.enable_reloading if ENV['RACK_ENV'] == 'development'
+loader.enable_reloading if %w[development test].include? ENV['RACK_ENV']
 
 loader.setup
 loader.reload

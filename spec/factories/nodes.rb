@@ -4,8 +4,8 @@ require 'securerandom'
 
 FactoryBot.define do
   factory :node do
-    sequence(:path) { |n| "path/to/item-#{n}.txt" }
-    name { File.basename(path, ".txt") }
+    sequence(:path) { |n| "path/to/item-#{n}.md" }
+    name { File.basename(path, ".md") }
     description { "A description for #{name}" }
     date { Date.today }
 
