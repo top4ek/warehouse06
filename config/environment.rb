@@ -14,6 +14,7 @@ require 'zeitwerk'
 loader = Zeitwerk::Loader.new
 
 loader.push_dir(File.join(project_root, 'app'))
+loader.push_dir(File.join(project_root, 'lib')) # Add this line
 
 app_subdirs_to_collapse = %w[
   models
