@@ -8,7 +8,7 @@ module Nodes
       include Dry::Monads[:result]
 
       def call(request)
-        node_record = document(request.path) # Renamed doc to node_record for clarity
+        node_record = document(request.path)
         return Failure(status: 404) if node_record&.id.nil?
 
         result = { status: 200, title: node_record.name, data: true, path: node_record.path }
@@ -31,7 +31,7 @@ module Nodes
       def document(request_path)
         base = request_path.split('/').reject(&:empty?)
         path = [base, base + ['README.md']].map { it.join('/') }
-        Node.where(path:).first # Changed Document to Node
+        Node.where(path:).first
       end
     end
   end

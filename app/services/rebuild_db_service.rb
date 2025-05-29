@@ -26,9 +26,8 @@ class RebuildDbService
   private
 
   def clean_db
-    puts('Cleaning database.')
     Tagging.dataset.delete
     Tag.dataset.delete
-    Node.dataset.delete # Changed from Document.dataset.delete
+    Node.dataset.delete
   end
 end

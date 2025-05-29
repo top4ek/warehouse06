@@ -24,26 +24,21 @@ module Routes
       r.on 'nodes' do
         r.get do
           nodes = if r.params['path']
-                    # Ensure the path parameter is clean and prevent directory traversal issues if necessary,
-                    # though Sequel typically handles this well with placeholders.
-                    # We also want to list immediate children or all descendants.
-                    # For now, let's list all descendants.
                     search_path = "#{r.params['path']}%"
-                    ::Node.where(Sequel.like(:path, search_path)).all # Added ::Node to specify top-level Node
+                    ::Node.where(Sequel.like(:path, search_path)).all
                   else
-                    ::Node.all # Added ::Node to specify top-level Node
+                    ::Node.all
                   end
           response.status = 200
-          Serializers::Node.render_as_json(nodes)
+          Serializers::Node.render(nodes)
         end
 
-        # Route for specific node GET /api/nodes/*
         r.get /(.+)/ do |full_path|
-          node = ::Node.first(path: full_path) # Use ::Node to specify top-level Node
+          node = ::Node.first(path: full_path)
 
           if node
             response.status = 200
-            Serializers::Node.render_as_json(node)
+            Serializers::Node.render(node)
           else
             response.status = 404
             { error: "Node not found" }
@@ -56,11 +51,10 @@ module Routes
           query = r.params['q']
 
           if query.nil? || query.strip.empty?
-            response.status = 200 # As per plan, return 200 and empty array for empty query
+            response.status = 200
             nodes = []
           else
             search_term = "%#{query.strip}%"
-            # Use ::Node to specify top-level Node model
             nodes = ::Node.where(Sequel.ilike(:name, search_term) | Sequel.ilike(:description, search_term)).all
             response.status = 200
           end

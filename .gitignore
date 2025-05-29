@@ -1,2 +1,18 @@
+# Environment variables
 .env
+/.env*.local
+
+# Databases
+/db/*.sqlite3
+
+# Temporary files and directories
+/tmp
 !.tmp/.keep
+
+# Other common ignores
+.bundle/
+coverage/
+*.log
+
+# RSpec/Test related
+/spec/examples.txt

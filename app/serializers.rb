@@ -3,4 +3,5 @@
 require 'json'
 require 'blueprinter'
 
-require_relative 'serializers/node'
+module Serializers
+end
