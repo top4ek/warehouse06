@@ -1,4 +1,3 @@
-!storage/.keep
 *.coverprofile
 *.dll
 *.dylib
@@ -24,5 +23,6 @@ go.work
 go.work.sum
 graphify-out
 profile.cov
-storage
+/storage/*
+!/storage/.keep
 tmp
