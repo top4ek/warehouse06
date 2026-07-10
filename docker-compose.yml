@@ -1,0 +1,66 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: build/dev/Containerfile
+      # Host network during build only: bridge-network MTU clamping breaks
+      # large module downloads on some setups (VPN hosts).
+      network: host
+    working_dir: /opt/app
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/opt/app
+      - go-mod:/go/pkg/mod
+      - go-build:/root/.cache/go-build
+      - ./storage:/opt/app/storage
+      - ./build/dev/config.yaml:/opt/app/build/dev/config.yaml
+    env_file:
+      - build/dev/.env
+    restart: unless-stopped
+
+  frontend:
+    image: node:24-alpine
+    working_dir: /opt/app/frontend
+    command:
+      - sh
+      - -ec
+      - |
+        npm ci
+        npm run build
+        npm run build:watch &
+        exec npm run dev -- --host 0.0.0.0 --port 5173
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/opt/app/frontend
+      - frontend-node-modules:/opt/app/frontend/node_modules
+    environment:
+      VITE_PROXY_TARGET: http://backend:8080
+      VITE_BUILD_ID: dev
+    depends_on:
+      backend:
+        condition: service_healthy
+    restart: unless-stopped
+
+  e2e:
+    build:
+      context: .
+      dockerfile: build/dev/e2e.Containerfile
+      network: host
+    profiles:
+      - e2e
+    working_dir: /opt/app/frontend
+    command: sh -c "npm ci && npm run test:e2e"
+    volumes:
+      - ./frontend:/opt/app/frontend
+      - e2e-node-modules:/opt/app/frontend/node_modules
+    environment:
+      CI: "1"
+    ipc: host
+
+volumes:
+  go-mod:
+  go-build:
+  frontend-node-modules:
+  e2e-node-modules:

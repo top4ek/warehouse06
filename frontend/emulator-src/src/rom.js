@@ -1,0 +1,458 @@
+// Vector-06js (c) 2016 Viacheslav Slavinsky
+//
+// ROM loader
+// Load ROM from url: url can be direct rom/r0m, or an url of a zip
+// file containing a rom/r0m. First suitable entry will be used.
+//
+
+"use strict";
+
+/** @constructor */
+function Loader(url, callback, callback_error, callback_fdd, callback_basic, parent_id, container_id) {
+    var str2ab = function(str) {
+        var buf = new ArrayBuffer(str.length);
+        var bufView = new Uint8Array(buf);
+        var dbg = "";
+        for (var i = 0, strLen = str.length; i < strLen; i++) {
+            bufView[i] = str.charCodeAt(i);
+
+            dbg += bufView[i].toString(16) + " ";
+            if ((i % 16 == 15) || (i == strLen - 1)) {
+                console.log(dbg);
+                dbg = "";
+            }
+        }
+        return buf;
+    };
+
+    var fetchROM2 = function(url, callback, callback_error) {
+        console.log("fetchROM2: ", url, callback, callback_error);
+        if (!url) return;
+
+        var name = url['name'];
+        if (name) {
+            var mem = url['mem'];
+            var ab, view;
+            var makedisk = false;
+            if (name.endsWith("r0m")) {
+                ab = new ArrayBuffer(mem.length);
+                view = new Uint8Array(ab);
+                for (var i = 0; i < view.length; i += 1) {
+                    view[i] = mem[i];
+                }
+            } else if (name.endsWith("rom") || name.endsWith("com")) {
+                ab = new ArrayBuffer(mem.length - 256);
+                view = new Uint8Array(ab);
+                for (var src = 256, dst = 0; dst < view.length; ++src, ++dst) {
+                    view[dst] = mem[src];
+                }
+                makedisk = name.endsWith("com");
+            } else if (name.toLowerCase().endsWith("wav")) {
+                console.log("fetchROM2: wav unhandled");
+            }
+            var blob = new Blob([ab], { type: "application/octet-stream" });
+            if (makedisk) {
+                buildFddAndLaunch([{ 'filename': name, 'blob': blob }]);
+            } else {
+                tryUnzip(url['name'], blob, callback);
+            }
+        } else {
+            var oReq = new XMLHttpRequest();
+            oReq.open("GET", url, true);
+            oReq.responseType = "blob";
+
+            oReq.onload = function(oEvent) {
+                var blob = oReq.response;
+                tryUnzip(url, blob, callback);
+            };
+            oReq.onerror = function(oEvent) {
+                console.log("XMLHttpRequest error", oEvent);
+                callback_error();
+            };
+
+            oReq.send();
+        }
+    };
+
+    var readData = function(blob, callback, start) {
+        var reader = new FileReader();
+        reader.addEventListener("loadend", function() {
+            //console.log("readData -> loadend; blob=", blob);
+            var rawdata = new Uint8Array(reader.result);
+            if (typeof start == "function") {
+                callback(start(rawdata), 0);
+            } else {
+                callback(rawdata, start);
+            }
+        });
+        reader.readAsArrayBuffer(blob);
+    };
+
+    var extract = function(entry, callback, start) {
+        if (entry['blob']) {
+            readData(entry['blob'], callback, start);
+        } else {
+            console.log("Unzipping ", entry.filename);
+            let writer = new zip.BlobWriter("application/octet-stream");
+            entry.getData(writer, function(data) {
+                readData(data, callback, start);
+            });
+        }
+    };
+
+    var extractAndLaunch = function(entry) {
+        var lower = entry.filename.toLowerCase();
+        if (lower.endsWith("rom") ||
+            lower.endsWith("r0m") ||
+            lower.endsWith("bin") ||
+            lower.endsWith("com")) {
+            var start = lower.endsWith("r0m") || lower.endsWith("bin") ? 0 : 0x100;
+            extract(entry, callback, start);
+        } 
+        else if (lower.endsWith("cas")) {
+            extract(entry, callback_basic, -1);
+        } 
+        else {
+            if (lower.endsWith("fdd")) {
+                extract(entry, callback_fdd,
+                    function(rawdata) {
+                        var fulldisk = rawdata;
+                        if (rawdata.length < 819200) {
+                            fulldisk = new Uint8Array(819200);
+                            var i;
+                            for (i = rawdata.length; --i >= 0; fulldisk[i] = rawdata[i])
+                                {};
+                            for (i = fulldisk.length; --i >= rawdata.length; 
+                                fulldisk[i] = 0xe5) {};
+                        }
+                        return fulldisk;
+                    }
+                );
+            }
+        }
+    };
+
+    var buildFddAndLaunch = function(items) {
+        // load the рыба first
+        new Loader("fdd/ryba.fdd",
+            function(rom, start) {},
+            function() {},
+            function(image, start) {
+                var fs = new Filesystem(0).FromArray(image);
+                console.log("рыба");
+                if (fs) {
+                    var asynccount = items.length;
+                    var initial;
+                    for (var i = 0; i < items.length; i += 1) {
+                        var name = items[i].filename;
+                        var finalize = function(initial) {
+                            if (initial) {
+                                initial = initial.toUpperCase() + "\n" + String.fromCharCode(26);
+                                var ibytes = new Uint8Array(initial.length);
+                                for (var i = 0; i < initial.length; i++) {
+                                    ibytes[i] = initial.charCodeAt(i);
+                                }
+                                fs.saveFile("initial.sub", ibytes);
+                            }
+                            callback_fdd(fs.bytes, 0);
+                        };
+
+                        (function(name) {
+                            if (name.toLowerCase().endsWith("fdd")) {
+                                console.log("Not including ", name);
+                                if (--asynccount === 0) {
+                                    finalize(initial);
+                                }
+                                return;
+                            }
+                            console.log("Extracting ", name);
+                            if (name.toLowerCase().endsWith("com")) {
+                                initial = name.toUpperCase().split(".")[0];
+                            }
+                            extract(items[i], function(contents, start) {
+                                console.log("Saving ", name);
+                                fs.saveFile(name, contents);
+                                if (--asynccount === 0) {
+                                    console.log("All files saved, boot");
+                                    fs.listDir();
+                                    finalize(initial);
+                                }
+                            }, 0);
+                        })(items[i].filename);
+                    }
+                }
+                //debugger;
+            });
+    };
+
+    var isRom = function(name) {
+        var lower = name.toLowerCase();
+        return lower.endsWith("rom") || lower.endsWith("r0m") || lower.endsWith("com") ||
+            lower.endsWith("bin");
+    };
+    var isFdd = function(name) {
+        var lower = name.toLowerCase();
+        return lower.endsWith("fdd");
+    };
+    var isBasic = function(name) {
+        var lower = name.toLowerCase();
+        return lower.endsWith("cas") || lower.endsWith("bas");
+    };
+
+    var createChooser = function(items) {
+        var parent = document.getElementById(parent_id);
+        var container = document.getElementById(container_id);
+
+        var build = document.createElement("div");
+        build.id = "buildhdr";
+        container.appendChild(build);
+        build.innerText = "[OR BUILD A BOOTABLE FLOPPY IMAGE]";
+        (function(itemz) {
+            build.onclick = function() {
+                parent.style.display = "none";
+                buildFddAndLaunch(itemz);
+            };
+        })(items);
+
+        var ol = document.createElement("ul");
+        ol.className = "romchooser-ol";
+        container.appendChild(ol);
+        //container.style.height = (parent.parentNode.clientHeight - parent.parentNode.clientHeight * 0.3) + "px";
+        container.style.height = "75vh";
+
+
+        for (var i = 0; i < items.length; i += 1) {
+            var li = document.createElement("li");
+            var a = document.createElement("a");
+            a.href = "#";
+            li.appendChild(a);
+            a.innerText = items[i].filename;
+            (function(clickitem) {
+                li.onclick = function() {
+                    parent.style.display = "none";
+                    extractAndLaunch(clickitem);
+                };
+            })(items[i]);
+            if (isRom(items[i].filename)) {
+                li.className = "chooser-li-rom";
+            } else if (isFdd(items[i].filename)) {
+                li.className = "chooser-li-fdd";
+            } else {
+                li.className = "chooser-li-wtf";
+            }
+            ol.appendChild(li);
+        }
+
+        parent.style.display = "block";
+        Loader.prototype.ChooserElement = parent;
+    };
+
+    var callbackWrapper = function(a, b, c)
+    {
+        //buildFddAndLaunch([{ 'filename': name, 'blob': blob }]);
+        //console.log("callbackWrapper", a, b, c);
+        callback(a, b, c);
+    };
+
+    var callbackBasicWrapper = function(a, b, c)
+    {
+        //buildFddAndLaunch([{ 'filename': name, 'blob': blob }]);
+        //console.log("callbackBasicWrapper", a, b, c);
+        callback_basic(a, b, c);
+    };
+
+    var tryUnzip = function(url, blob, callback) {
+        zip.createReader(new zip.BlobReader(blob), function(reader) {
+                reader.getEntries(function(entries) {
+                    if (entries.length) {
+                        var validlist = [];
+                        for (var i = 0; i < entries.length; i++) {
+                            var lower = entries[i].filename.toLowerCase();
+                            validlist.push(entries[i]);
+                        }
+                        if (validlist.length == 1) {
+                            extractAndLaunch(validlist[0]);
+                        } else if (validlist.length > 1) {
+                            createChooser(entries);
+                        }
+                    }
+                });
+            },
+            function(error) {
+                console.log("unzip", error, " - trying as rom or fdd");
+                if (url.toLowerCase().endsWith("fdd")) {
+                    readData(blob, callback_fdd, 0);
+                } 
+                else if (url.toLowerCase().endsWith("com")) {
+                    buildFddAndLaunch([{'filename': blob.name, 'blob': blob}]);
+                }
+                else if (url.toLowerCase().endsWith("cas")) {
+                    readData(blob, callbackBasicWrapper, -1);
+                }
+                else if (url.toLowerCase().endsWith("wav")) {
+                    console.log("tryUnzip->error->wav");
+                    let wavjs = new wav(blob);
+                    wavjs.onloadend = function() {
+                        console.log("wavjs.onloadend", this);
+                        this.slice(0, this.getDuration(), function(buf) {
+                            this.getSamples(buf);
+
+                            // we need to reset with F1 key held down
+                            //keyboard2.applyKey(112, false);
+                            keyboard2.onreset(true);
+                            //v06c.BlkSbr(false, false);
+                            v06c.autotype = ['F1Dn', 50, 'F1Up'];
+                            v06c.autotype.reverse();
+                            v06c.autotype_onfinished = function() {
+                                tape_player.setwav(wavjs); // "this" is wavjs
+                                tape_player.onfinished = function() {
+                                    window.parent.postMessage({type: "tape_stopped"}, "*");
+                                }
+                            };
+                        });
+                    };
+                }
+                else {
+                    var start = url.toLowerCase().endsWith("r0m") ? 0 : 0x100;
+                    readData(blob, callbackWrapper, start); // <-- wrap callback to fetchROM2() ?
+                }
+            });
+
+        return undefined;
+    };
+
+    var initDrop = function(inputs) {
+        // a message listener for loading from pretty assembler
+        if (!window.__v06EmbeddedInputBridge) {
+        window.addEventListener("message", (e) => {
+            const {cmd, file} = e.data;
+            if (cmd === "loadfile") {
+                console.log("message loadfile: ", file);
+                tryUnzip(file.name, file, callback);
+            }
+            else if (cmd === "debugger") {
+                dbg.command(e.data);
+            }
+            else if (cmd === "input") {
+                switch (e.data.subcmd) {
+                    case "help":
+                        {
+                            let data = [
+                                {
+                                    name_guest: 'СС',
+                                    name_host: 'Shift',
+                                    keycode: 16,
+                                },
+                                {
+                                    name_guest: 'УС',
+                                    name_host: 'Ctrl',
+                                    keycode: 17,
+                                },
+                                {
+                                    name_guest: 'РУС/LAT',
+                                    name_host: 'F6',
+                                    keycode: 117,
+                                },
+                                {
+                                    name_guest: 'БЛК+ВВОД',
+                                    name_host: 'F11',
+                                    keycode: 122,
+                                },
+                                {
+                                    name_guest: 'БЛК+СБР',
+                                    name_host: 'F12',
+                                    keycode: 123,
+                                }
+                            ];
+                            window.parent.postMessage({type: "input", what: "keys", data: data});
+                        }
+                        break;
+                    case "keydown":
+                        {
+                            let keycode = e.data.keycode;
+                            if (keycode === 122 || keycode === 123) { // F11, F12
+                                keyboard2.onreset(keycode === 122);
+                            }
+                            else {
+                                keyboard2.applyKey(keycode, false);
+                            }
+                        }
+                        break;
+                    case "keyup":
+                        {
+                            let keycode = e.data.keycode;
+                            keyboard2.applyKey(keycode, true);
+                        }
+                        break;
+                }
+            }
+        });
+        }
+
+        for (let inputId in inputs) {
+            let target = document.getElementById(inputs[inputId]);
+            if (!target) {
+                console.log("initDrop: cannot find element ", inputs[inputId]);
+                continue;
+            }
+            if (target.tagName === "INPUT") {
+                var fileSelectHandler = function(e) {                    
+                    var fileselect = document.getElementById(inputs[inputId]);
+                    if (Loader.prototype.ChooserElement) {
+                        Loader.prototype.ChooserElement.style.display = "none";
+                        Loader.prototype.ChooserElement = undefined;
+                    }
+                    tryUnzip(fileselect.files[0].name, fileselect.files[0], callback);
+
+                    // recreate the input thingy
+                    //<input class="upload" type="file" id="fileselect" name="fileselect[]"/>                
+                    let input = document.createElement("input");
+                    input.className = "upload";
+                    input.type = "file";
+                    input.name = "fileselect[]";
+                    input.addEventListener("change", fileSelectHandler);
+                    fileselect.parentNode.replaceChild(input, fileselect);
+                    input.id = "fileselect";
+                };
+
+                target.addEventListener("change", fileSelectHandler, false);
+            } else if (target.tagName === "CANVAS") {
+                // try dragover with canvas
+                target["ondragover"] = function(e) {
+                    e.preventDefault();
+                };
+                target["ondragenter"] = function(e) {
+                    e.preventDefault();
+                    var parent = target.parentNode;
+                    parent.className += " dragover";
+                };
+                target["ondragleave"] = function(e) {
+                    e.preventDefault();
+                    var parent = target.parentNode;
+                    parent.className = parent.className.replace(/ dragover/g, "");
+                    //parent.className = parent.className.substring(parent.className.length - " dragover".length);
+                };
+                target["ondragend"] = function(e) {
+                    e.preventDefault();
+                };
+                target["ondrop"] = function(e) {
+                    e.preventDefault();
+                    var parent = target.parentNode;
+                    parent.className = parent.className.replace(/ dragover/g, "");
+                    tryUnzip(e.dataTransfer.files[0].name, e.dataTransfer.files[0], callback);
+                };
+            }
+        }
+
+        window.parent.postMessage({type: "ready"}, "*");
+
+    };
+
+    this.attachDrop = function(fileselect) {
+        if (window.File && window.FileList && window.FileReader) {
+            initDrop(fileselect);
+        }
+    };
+
+    fetchROM2(url, callback, callback_error);
+}

@@ -1,0 +1,21 @@
+FROM golang:1.26.5-alpine@sha256:0178a641fbb4858c5f1b48e34bdaabe0350a330a1b1149aabd498d0699ff5fb2
+
+WORKDIR /opt/app
+EXPOSE 8080
+
+ENV GO111MODULE=on
+ENV CGO_ENABLED=1
+
+# Prebuilt binary: compiling golangci-lint from source pulls hundreds of
+# modules and is flaky on this network (see docker-compose MTU note).
+COPY --from=golangci/golangci-lint:v2.12.2-alpine /usr/bin/golangci-lint /go/bin/golangci-lint
+
+RUN apk add --no-cache ca-certificates gcc musl-dev git curl make && \
+    update-ca-certificates && \
+    go install github.com/cespare/reflex@v0.3.2 && \
+    golangci-lint version
+
+HEALTHCHECK --interval=10s --timeout=5s --retries=5 \
+  CMD curl -fsS http://127.0.0.1:8080/ping || exit 1
+
+ENTRYPOINT ["reflex", "-d", "fancy", "-c", "./build/dev/reflex.conf"]
