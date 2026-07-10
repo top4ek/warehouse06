@@ -1,0 +1,14 @@
+{
+  "vector06js": {
+    "repo": "https://github.com/svofski/vector06js.git",
+    "ref": "d92fe0da98f5b95c7f61d93b29f29290923738ca"
+  },
+  "i8080-js": {
+    "repo": "https://github.com/svofski/i8080-js.git",
+    "ref": "595737dae58a2e4ee7c3af25482cf79abf2045ca"
+  },
+  "zip.js": {
+    "repo": "https://github.com/gildas-lormeau/zip.js.git",
+    "ref": "563fe1da2579e55ae0ab1fed38a3b37a234e239e"
+  }
+}

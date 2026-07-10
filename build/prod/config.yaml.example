@@ -1,0 +1,9 @@
+env: production
+storage_dir: storage
+storage_url: ""
+server:
+  port: 8080
+database:
+  dsn: file:/app/data/warehouse06.db?cache=shared&_journal_mode=WAL
+sync:
+  interval_hours: 24

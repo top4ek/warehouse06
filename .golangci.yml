@@ -1,0 +1,38 @@
+version: "2"
+
+run:
+  build-tags:
+    - sqlite_fts5
+
+linters:
+  # standard set: errcheck, govet, ineffassign, staticcheck, unused
+  enable:
+    - copyloopvar
+    - misspell
+    - nilerr
+    - noctx
+    - rowserrcheck
+    - sqlclosecheck
+    - unconvert
+    - unparam
+  settings:
+    errcheck:
+      exclude-functions:
+        - (*database/sql.Rows).Close
+        - (*database/sql.Stmt).Close
+        - (*database/sql.Tx).Rollback
+        - (*os.File).Close
+    misspell:
+      locale: US
+  exclusions:
+    paths:
+      - frontend
+    rules:
+      - path: _test\.go
+        linters:
+          - noctx
+          - unparam
+
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
