@@ -1,0 +1,20 @@
+FROM golang:1.26.3-alpine@sha256:91eda9776261207ea25fd06b5b7fed8d397dd2c0a283e77f2ab6e91bfa71079d
+
+WORKDIR /opt/app
+EXPOSE 8080
+
+ENV GO111MODULE=on
+ENV CGO_ENABLED=1
+
+ARG GOLANGCI_LINT_VERSION=v2.12.2
+
+RUN apk add --no-cache ca-certificates gcc musl-dev git curl make && \
+    update-ca-certificates && \
+    go install github.com/cespare/reflex@v0.3.2 && \
+    go install github.com/golangci/golangci-lint/v2/cmd/golangci-lint@${GOLANGCI_LINT_VERSION} && \
+    golangci-lint version
+
+HEALTHCHECK --interval=10s --timeout=5s --retries=5 \
+  CMD curl -fsS http://127.0.0.1:8080/ping || exit 1
+
+ENTRYPOINT ["reflex", "-d", "fancy", "-c", "./build/dev/reflex.conf"]

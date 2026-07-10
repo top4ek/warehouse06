@@ -1,0 +1,10 @@
+env: "development"
+storage_dir: "storage"
+storage_url: "https://github.com/top4ek/retro_files"
+server:
+  port: 8080
+database:
+  driver: "sqlite3"
+  dsn: ":memory:"
+sync:
+  interval_hours: 0

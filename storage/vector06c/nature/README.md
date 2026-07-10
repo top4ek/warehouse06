@@ -1,6 +1,5 @@
 ---
 title: Nature
-missing: true
 tags:
   - demo
   - missing

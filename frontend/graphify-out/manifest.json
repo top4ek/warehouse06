@@ -1,0 +1,1192 @@
+{
+  "/home/alex/Syncthing/projects/Mine/warehouse06/cmd/server/main.go": {
+    "mtime": 1780029447.5323613,
+    "ast_hash": "830d88c425e02b07f33013782e5605fc",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/pathutil/contain_test.go": {
+    "mtime": 1779128330.2941058,
+    "ast_hash": "6ba4fa14c8b1a8336c36d6a12e197e02",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/pathutil/contain.go": {
+    "mtime": 1779126876.7628114,
+    "ast_hash": "a7f23af63e211a2f1005ee01ad5b54b2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/parser/parser_test.go": {
+    "mtime": 1779115536.9371295,
+    "ast_hash": "30696ce3d338214bd18e18c50c484b07",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/parser/parser.go": {
+    "mtime": 1779126972.685832,
+    "ast_hash": "9595cff63c015f46a6dbcf08a190a5c1",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/debuglog/debuglog.go": {
+    "mtime": 1779988008.8120325,
+    "ast_hash": "a7a5055fb1118b9159b6d180a26835d9",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/gitdate/head.go": {
+    "mtime": 1779129415.360278,
+    "ast_hash": "68815ad1eed52517cd851bb1ce9e98ca",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/gitdate/head_test.go": {
+    "mtime": 1779129516.6726599,
+    "ast_hash": "3f3d3906a8978aa5afc4de3b203d6e27",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/gitdate/created.go": {
+    "mtime": 1779128405.280511,
+    "ast_hash": "1220480f9ad36a9d1e9f430aa5de661a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/delivery/http/handler.go": {
+    "mtime": 1779988728.1369739,
+    "ast_hash": "24a0bd2c22274d20522345511ea65806",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/delivery/http/handler_test.go": {
+    "mtime": 1779129510.2729928,
+    "ast_hash": "e6189727a4bd639fa5ec3a2d29fbdd87",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/delivery/http/limits.go": {
+    "mtime": 1779126880.0655768,
+    "ast_hash": "3716026a09f025f576acb718757f01b2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/delivery/http/middleware.go": {
+    "mtime": 1779126906.4778779,
+    "ast_hash": "4380ef1e40d268d71e1d18f1564e12ad",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/storage/git.go": {
+    "mtime": 1779130430.4511437,
+    "ast_hash": "a5619a3a06be81392d0ea9b1b2377d21",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/storage/ensure.go": {
+    "mtime": 1779130431.0132573,
+    "ast_hash": "6cc00ed5f8bbb04ed4f920cca8a18201",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/storage/git_test.go": {
+    "mtime": 1779130483.1549413,
+    "ast_hash": "647c2f63dab1d5dd8781899be94f9ebe",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/htmlsanitize/sanitize.go": {
+    "mtime": 1779126875.975868,
+    "ast_hash": "6533a8616932a61bf5a1f5fbe86a5b05",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/sync/status.go": {
+    "mtime": 1779129447.5530312,
+    "ast_hash": "d4139205ace8c1f87ba5b9fc455d50f7",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/sync/sync.go": {
+    "mtime": 1779988755.4253013,
+    "ast_hash": "4d7a1bc53db0020f6b27016082d21683",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/staticfiles/emulator.go": {
+    "mtime": 1780029320.0176134,
+    "ast_hash": "832a1f91b21d1e3a18aa5e1f1ca4f9b2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/staticfiles/emulator_test.go": {
+    "mtime": 1780029321.962503,
+    "ast_hash": "5f8e58c65ba5e5375830ab3f9fa55d1b",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/staticfiles/legacy_assets.go": {
+    "mtime": 1780028861.0258431,
+    "ast_hash": "cdb0553f7003d20b9bb3e018998c872c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/staticfiles/legacy_assets_test.go": {
+    "mtime": 1780028861.9897363,
+    "ast_hash": "c8bbe17bcd7f17106e120dce9b0d629c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/staticfiles/serve.go": {
+    "mtime": 1780029114.3399572,
+    "ast_hash": "754174c7c841d1cb36893e0dda91b3fd",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/staticfiles/serve_test.go": {
+    "mtime": 1779126874.8389502,
+    "ast_hash": "67e6a985b25c9ddf30c862c03c94aef7",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/fts.go": {
+    "mtime": 1779127034.7542675,
+    "ast_hash": "fdfb074426cf66a335233ac9eb77b292",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/holder.go": {
+    "mtime": 1779129430.5286324,
+    "ast_hash": "ea4b7795d5ad09e1f9a8c49be41dff20",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/like.go": {
+    "mtime": 1779127030.157347,
+    "ast_hash": "ca7958f517ec81788c324e67f1eb9f6d",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/sqlite_test.go": {
+    "mtime": 1779115528.2450826,
+    "ast_hash": "2a9b9fe452e1662a13aeb64d9ad8aa20",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/like_test.go": {
+    "mtime": 1779128327.7211552,
+    "ast_hash": "17509db7850f403a4d0138bbadebf815",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/holder_test.go": {
+    "mtime": 1779129593.9380517,
+    "ast_hash": "72f614b34819b655c7237c8d9264c5b8",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/errors.go": {
+    "mtime": 1779121184.9449337,
+    "ast_hash": "2e8677c75549de68130fe40ddf8b2767",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/sqlite_pool_test.go": {
+    "mtime": 1779121242.6203234,
+    "ast_hash": "94f4ec73d94fe2e6b6a373ef9f76cf0d",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/fts_test.go": {
+    "mtime": 1779119397.5205188,
+    "ast_hash": "537aaf52afc8524cd96f8ae1fb0eff42",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/sqlite_queries.go": {
+    "mtime": 1779988746.2253056,
+    "ast_hash": "e99e14d8c414ed2ccd6abf9474f8b459",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/sqlite_sync.go": {
+    "mtime": 1779988755.4272766,
+    "ast_hash": "fa555e7545c58aea56ec95ecb93a043d",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/startup_dsn.go": {
+    "mtime": 1779964561.5312588,
+    "ast_hash": "567d868fe0416f60304d093270de8716",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/repository/sqlite.go": {
+    "mtime": 1779988735.9660687,
+    "ast_hash": "3481668c99bdf438dc9cda7097a31778",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/domain/entry.go": {
+    "mtime": 1779024106.4581661,
+    "ast_hash": "f30740fa74df97114f6041d7b67fa357",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/domain/sync_status.go": {
+    "mtime": 1779129430.5296323,
+    "ast_hash": "42b9ba0479545545432e9c134200f5c6",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/config/config_test.go": {
+    "mtime": 1779129805.5715768,
+    "ast_hash": "c1c6d795df6e5d02ba851cd2b2b47b38",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/internal/config/config.go": {
+    "mtime": 1779129405.9116883,
+    "ast_hash": "e7b332c7d1c0a4c6c8b289fe9e737502",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/.opencode/opencode.json": {
+    "mtime": 1779034889.654455,
+    "ast_hash": "e5f74d14a81702b55bdf53b33ec991d7",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/.opencode/package.json": {
+    "mtime": 1779034897.4214516,
+    "ast_hash": "61b57c05f50886da87c19601ad97c4a6",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/.opencode/plugins/graphify.js": {
+    "mtime": 1779022135.5875704,
+    "ast_hash": "be1746a10b51388635ff4e97b3e91a50",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/vite.config.ts": {
+    "mtime": 1780029115.4754403,
+    "ast_hash": "3ac1df3259cbcaf55dcd52c47c2ddeb8",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/tsconfig.app.json": {
+    "mtime": 1779035946.6332095,
+    "ast_hash": "b80e641fbe59fac92a3f4e6747d05f8a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/tsconfig.json": {
+    "mtime": 1779035945.1732047,
+    "ast_hash": "a3d39fa780ebff65444de257f291ce6c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/package.json": {
+    "mtime": 1779991563.4563937,
+    "ast_hash": "8b887ab6de809cbc89d589a72cc0bae3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/tsconfig.node.json": {
+    "mtime": 1779035949.2492182,
+    "ast_hash": "7967a63efc8efb0b1f27ed926590ba07",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/externs.js": {
+    "mtime": 1779014105.960308,
+    "ast_hash": "09d933c4ab785850b4c06bd9c049bad2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/wav.js/wav.js": {
+    "mtime": 1779014106.156281,
+    "ast_hash": "0dfecca0cc3fe8ae5298f09ad690f99b",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/t-8080.sh": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "d54a20d7c11cca0119f14294532250bb",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/test-8253.js": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "ebeff2540bcf0451b066e00c136586e2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/complete-run.sh": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "b07b4b3f774ea5aeedd0f5e3dec5199c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/t-v06c.sh": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "f6873fcd84ec722864c3975478d65b73",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/t-8253.sh": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "0bea1da07aae62317bfa8a75e3c6a875",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/test.js": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "8575b75a5fd674ac0d28e2b218ed6937",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/filterdesign/downsample/downsample.m": {
+    "mtime": 1779014105.9618235,
+    "ast_hash": "d880fbf37b652a89f5592cbe8fee25e3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/inflate.js": {
+    "mtime": 1779014120.7170625,
+    "ast_hash": "fd952b261e960d0d7c8498569bee75d6",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/zip-ext.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "b07cc9262575e942579e9948d5c86ba5",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/z-worker.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "7d40d9ac5e628c8f4ab5e683b11e09ba",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/zip.js": {
+    "mtime": 1779014120.719491,
+    "ast_hash": "3628e1a12984058c0b257af371629ded",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/zip-fs.js": {
+    "mtime": 1779014120.719491,
+    "ast_hash": "cc38e0962c1e03da1c027183f931e691",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/deflate.js": {
+    "mtime": 1779014120.7170625,
+    "ast_hash": "d4e3a2a82db29526b20ce9314ce835fe",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/mime-types.js": {
+    "mtime": 1779014120.717491,
+    "ast_hash": "0b905934d7271bd0d03624ad556df7a0",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/zlib-asm/codecs.js": {
+    "mtime": 1779014120.719491,
+    "ast_hash": "a8189b89d35d7cf62ce530270a5efe21",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/pako/codecs.js": {
+    "mtime": 1779014120.717491,
+    "ast_hash": "4abd21a23d6a5519b9b692f98d67e7c5",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/util.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "11f29c33e648fe58b3721bc523df05d5",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/dataview.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "f6e3fea543f965f60dd3c6a4a522976e",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test6.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "802870708b3875544e072a9c195dbcec",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test13.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "c70d91419a886e014b25138f70b13544",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test20.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "efef5b82c24ea264efe2b8f80cb31f36",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test18.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "10b73276ffb7b0cd65a21104183012b6",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test11.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "47f97c1c74e9213c6352bb14548383b6",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test7.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "1aa6b66ea462b04ae4fd148cd083cde9",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test14.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "46f6fac55a54ed8d327e985238aa13be",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test10.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "95cede97388d3e764db282653ef62d37",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test16.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "6f737d33c3d1021d7dd2d6743e570715",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test8.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "39986a804afc492471b4df56269eb588",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/arraybuffer.js": {
+    "mtime": 1779014120.717491,
+    "ast_hash": "1844af1441424e7245f6231f47303b5f",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test15.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "9c7db9f5bcb57438bccbf048efda5eff",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test12.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "e4382a322ea93c2bab6f1f118e648d74",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/base64.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "562d23f345ba9d9325c5f8112c9248a3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/config.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "eb70f64ee76b4132ac3c5df73fb99d76",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test17.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "35a40c3d64f37d9bd465ad5a17f740c9",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test5.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "1e509807b93d850d0d5e07d9bff8d993",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test1.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "3d5c6640d26862f466876ee9450273a3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test2.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "82167edb99a23083b26d41e06b441a69",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test3.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "7ded7a531448e1f662ce6cc35474bc62",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test4.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "045647387799cc888d1493afd4c3588a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test9.js": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "6f0ae386893d65177912f46bcd539d97",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/main.js": {
+    "mtime": 1779014120.655683,
+    "ast_hash": "4e0e7c84d62516b0846e2a245706d968",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/i8080_test.js": {
+    "mtime": 1779014120.655683,
+    "ast_hash": "86b588fdde71fadc411315f6e536f6db",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/console.js": {
+    "mtime": 1779014120.6544905,
+    "ast_hash": "937c36ea4623a45594696b4078855be4",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/i8080_disasm.js": {
+    "mtime": 1779014120.655683,
+    "ast_hash": "fcf95e747a7e03e180ebe8e8785428a4",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/rkdump.c": {
+    "mtime": 1779014120.655683,
+    "ast_hash": "b7209968cbe3cad27e355cb39bc06aa5",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/i8080.js": {
+    "mtime": 1779014120.655683,
+    "ast_hash": "f96629bfee3ca7f6faa23d2b04580322",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/i8080_trace.js": {
+    "mtime": 1779014120.655683,
+    "ast_hash": "5d245d46659eb1fda87a17bc5751b90d",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/ay.js": {
+    "mtime": 1779014106.1503518,
+    "ast_hash": "6f25e1bc9850bdee92eccac4976f28b0",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/rom.js": {
+    "mtime": 1779124875.3040657,
+    "ast_hash": "ba77da1f800205e4e3cc3e6aafcac740",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/main.js": {
+    "mtime": 1779124872.3175197,
+    "ast_hash": "5f3c058326dffc678aede8119e56aa84",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/memory.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "0950734b3fc5b15542433493b6de2d1c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/fili.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "d1fb6dc5c1cb34330684053bec41fd3a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/io.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "1c0e83387002c5515c833235fd3ecdc7",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/i8253.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "cf38452ab7aaca60ae22db27c81ee7cf",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/keyboard.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "f11063a2b5488a01e465bc7cf46808f0",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/fd1793.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "a9d34dd9a1ef1e25ed1cb6830874a1ad",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/hooks.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "9204d92a5e55b3c46a9f0bad4e236200",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/wavplayer.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "ff6928c4646c90d8071bec7c31276774",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/tv.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "1be6ebda77d9282f44a4f3d3ee884918",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/debugger.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "143de33e3a1c8ff2a08a81550f004329",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/fddimage.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "64d55c6bc511230db516a303c5fa9af9",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/src/sound.js": {
+    "mtime": 1779014106.1519876,
+    "ast_hash": "2a0a2b158a69018e41e19d2ca74c32e7",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/App.tsx": {
+    "mtime": 1780028870.7008295,
+    "ast_hash": "a33a9b7ef4a072bd020da4876066c0b8",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/vite-env.d.ts": {
+    "mtime": 1779035972.9653065,
+    "ast_hash": "0352474ba2918efe13895edbc3780d94",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/main.tsx": {
+    "mtime": 1780029447.7049673,
+    "ast_hash": "350de49f4ad2428dc3d72a6497ab165b",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/theme.ts": {
+    "mtime": 1779114550.6779437,
+    "ast_hash": "750b274806c19ac782ad90357fd555b8",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/layouts/AppLayout.tsx": {
+    "mtime": 1779125119.9811475,
+    "ast_hash": "d75e1c72253b63a13a2e3dae6e20c7dd",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/emulator.ts": {
+    "mtime": 1780029321.7471535,
+    "ast_hash": "3dddd00cf7bb46337bbf10d0e206fb2a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/sanitizeHtml.ts": {
+    "mtime": 1779127889.7310188,
+    "ast_hash": "fcfa446c45538e246e4e89ff5ca94417",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/playRoute.ts": {
+    "mtime": 1779991047.629627,
+    "ast_hash": "3ed8ef6fccf6d6c7c47a2fd7b4582e47",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/listRestore.ts": {
+    "mtime": 1780031847.9060068,
+    "ast_hash": "748c0966fe830704b281569c601733cd",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/html.ts": {
+    "mtime": 1779042286.6056817,
+    "ast_hash": "7e8386a7c656ddfaa6e7f82a645b2539",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/format.ts": {
+    "mtime": 1779039332.6267052,
+    "ast_hash": "26ae3ef1fedf6e046402a7ce2852802d",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/playRoute.test.ts": {
+    "mtime": 1779991060.7597668,
+    "ast_hash": "0bd9ddd0ae9414170633c2013c5d7d84",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/youtube.ts": {
+    "mtime": 1779127890.65806,
+    "ast_hash": "a0f3a827525861d78fd8047722d91b3e",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/browse.ts": {
+    "mtime": 1779039369.5993705,
+    "ast_hash": "601c89bc36ecb0460d9dc077feec36b9",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/lib/emulatorInput.ts": {
+    "mtime": 1779127916.3481224,
+    "ast_hash": "df52bb4729ce3270f96d677325284bbe",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/pages/Author.tsx": {
+    "mtime": 1779127950.932593,
+    "ast_hash": "45337ed42128c213924b9fa4c5727b0a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/pages/Home.tsx": {
+    "mtime": 1780032013.1992984,
+    "ast_hash": "505b6c61e166a9066963b84566dcd980",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/pages/Browse.tsx": {
+    "mtime": 1779041306.1579008,
+    "ast_hash": "027e333731c49133c9cc2a94d1bb9f8a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/pages/Authors.tsx": {
+    "mtime": 1779041306.1579008,
+    "ast_hash": "54b9273ebf8cf182a66999a20bf0275f",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/pages/Platforms.tsx": {
+    "mtime": 1779104490.8499312,
+    "ast_hash": "af548645560d78e780aa27f57aef9e75",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/pages/Entry.tsx": {
+    "mtime": 1780031949.760773,
+    "ast_hash": "0293f8cc8bca07076fe82fccf351b42b",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/hooks/useCatalog.ts": {
+    "mtime": 1780032050.1321533,
+    "ast_hash": "b616d1c2e0d03b9d6f5a81bf68ca69c5",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/hooks/useHeaderDropdown.ts": {
+    "mtime": 1779114068.0270524,
+    "ast_hash": "239bb9b7013e39f9bd6c457bcbe8b1ae",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/hooks/useHeaderDropdownPanel.ts": {
+    "mtime": 1779114549.13792,
+    "ast_hash": "b64d3aa4bea365e53399782b5957ee7d",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/hooks/useInfiniteScroll.ts": {
+    "mtime": 1779039333.1927154,
+    "ast_hash": "d6aab79eec50385fe936ba6383a8879e",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/hooks/useBidirectionalScroll.ts": {
+    "mtime": 1780031850.5154448,
+    "ast_hash": "a9ad74569998a1771623391378e659b9",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/api/types.ts": {
+    "mtime": 1779129653.569921,
+    "ast_hash": "f6b3dcd929e51906de1f3f559129cfb2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/api/schemas.ts": {
+    "mtime": 1779129652.2448893,
+    "ast_hash": "4676fbb9d274d4db6afbb164561d2400",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/api/errors.ts": {
+    "mtime": 1779127891.7801096,
+    "ast_hash": "826359edab1167b5e14b23d235ea34d4",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/api/index.ts": {
+    "mtime": 1779991060.3147619,
+    "ast_hash": "dba22511c2de6439166181a9b4a738df",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/api/client.ts": {
+    "mtime": 1780029116.582452,
+    "ast_hash": "4545b983b82df116368de42401cfe360",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/context/ThemeContext.tsx": {
+    "mtime": 1779125140.5114884,
+    "ast_hash": "c8a7ba5756ee1ab54df1c9a966cf2c4b",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/context/PrefsContext.tsx": {
+    "mtime": 1779125649.0089257,
+    "ast_hash": "47cff4d139f4b8150993a717922d3092",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/AppNavMenu.tsx": {
+    "mtime": 1779112864.7459464,
+    "ast_hash": "c8e780efaa0911ea4454a97ae1ed3d87",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/EmulatorDialog.tsx": {
+    "mtime": 1779125181.5662303,
+    "ast_hash": "87d9d3fce5c158dede86bacec496a256",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/SearchBar.tsx": {
+    "mtime": 1779108171.3953087,
+    "ast_hash": "41ab9212ab359437a526779a0d920634",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/EntrySidebarResources.tsx": {
+    "mtime": 1780029449.301984,
+    "ast_hash": "4e511978f88a50179e182fecfcd985e2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/BrandMark.tsx": {
+    "mtime": 1779125101.505007,
+    "ast_hash": "95f61e9a6ba825aaa2a6d3139cc4ebca",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/ViewSettingsMenu.tsx": {
+    "mtime": 1779125657.0241728,
+    "ast_hash": "846af375b88e5e80320e1028147adb07",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/VideoDialog.tsx": {
+    "mtime": 1779127959.6492627,
+    "ast_hash": "c9dfe01c684bd7c83a9a2665a8b27ff3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/ErrorBoundary.tsx": {
+    "mtime": 1780029449.8809903,
+    "ast_hash": "f14995c9b99c70bc4d5a742172e9f4ee",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/SortMenu.tsx": {
+    "mtime": 1779114562.747129,
+    "ast_hash": "21a8f37b0b3bf10af37f275f3d96564c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/AppMobileNav.tsx": {
+    "mtime": 1779125116.201296,
+    "ast_hash": "96cf49856b3dc2582712f2eea114c543",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/ScrollToTopFab.tsx": {
+    "mtime": 1779103533.799939,
+    "ast_hash": "690983c88b6152154cb1bad37d8e897b",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/common/LoadingCenter.tsx": {
+    "mtime": 1779103552.0029244,
+    "ast_hash": "798299f5c877b7c8b55bc7dbe2ff8d77",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/common/LinkList.tsx": {
+    "mtime": 1779103997.5012496,
+    "ast_hash": "4f9c8f481dae29a55c59cc4678b667ff",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/common/UiWindow.tsx": {
+    "mtime": 1779124139.695348,
+    "ast_hash": "fe9c63771acb640c668c57c83a1a807e",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/catalog/EntryCatalog.tsx": {
+    "mtime": 1780032010.7706084,
+    "ast_hash": "1122b7b1ceafe16bbf881e0253400412",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/catalog/EntryList.tsx": {
+    "mtime": 1780031939.297631,
+    "ast_hash": "c0508f750129edf0d5e82d3e92a3c271",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/components/catalog/EntryMetaLine.tsx": {
+    "mtime": 1779103552.0029244,
+    "ast_hash": "0ba85f67ce5476eae2d36d990aeabe56",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/theme/favicon.ts": {
+    "mtime": 1779125148.1546888,
+    "ast_hash": "20f4f1011223ac3a7ebaf3e30461e38d",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/docker-compose.yml": {
+    "mtime": 1780029117.255601,
+    "ast_hash": "f4f0fcaaeb5b5e9c24d78e617de54d98",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/config.yaml": {
+    "mtime": 1779965397.094917,
+    "ast_hash": "1c28996ae42b2bcc5f3c5d766aba24a6",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/AGENTS.md": {
+    "mtime": 1779022135.5873346,
+    "ast_hash": "da79aa9343cd2b362206f03762160abc",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/docker-compose.prod.yml": {
+    "mtime": 1779120711.4134207,
+    "ast_hash": "8fcab6aa14e211009576ae915f241641",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/config.file.yaml": {
+    "mtime": 1779964005.1153777,
+    "ast_hash": "832de4fef015f5cf84778b982d38bfa6",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/config.memory.yaml": {
+    "mtime": 1779963529.9400613,
+    "ast_hash": "499921214d8ba4e0b245fb6f56e01cdf",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/README.md": {
+    "mtime": 1778954734.9776468,
+    "ast_hash": "eb84709a4900985d89598dd3e2c25728",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/index.html": {
+    "mtime": 1779991552.67022,
+    "ast_hash": "fa9309a52942d8b18d5076d7e94e5a08",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/README.md": {
+    "mtime": 1779014105.959312,
+    "ast_hash": "865094b6a6332790930bf8e5a6a9c1ee",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/index.html": {
+    "mtime": 1779014106.1473517,
+    "ast_hash": "3ba9b8f5d69c7d84c4b81b67d47e08af",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/vector06js.html": {
+    "mtime": 1779014106.1473517,
+    "ast_hash": "3ba9b8f5d69c7d84c4b81b67d47e08af",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/wav.js/README.md": {
+    "mtime": 1779014106.156281,
+    "ast_hash": "24f475c4d838540720347e2c197dae17",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/wav.js/LICENSE.md": {
+    "mtime": 1779014106.156281,
+    "ast_hash": "31a45a8b28d1a4f015466a9c58ca53e3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/i8253_bcd.txt": {
+    "mtime": 1779014106.154352,
+    "ast_hash": "d691876a7f0cf46146dd65e5bbc6a536",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/tst8253.txt": {
+    "mtime": 1779014106.1553519,
+    "ast_hash": "fafce3516940c3b72019cf7cbb3181ad",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/readme.txt": {
+    "mtime": 1779014106.154352,
+    "ast_hash": "e3dc8536732b63b84d80f3ddffd7b750",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/lorem.txt": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "495347bbce33c4733bee7ef6b10b55b3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test13.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "bd12ea8442c67a4f97b9ce0b28e8e437",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test3.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "b42fd4058650004d06b8ac6891bdca81",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test2.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "797a0a6fe59a29e1e4d5ac2efdb1d926",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test20.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "b22268b0494baad7d8f42054024a23f0",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test4.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "f693d21ad54c88accd21adec719eb955",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test6.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "bae631cb51d20df528fa0c508aac4575",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test17.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "dd09509d89e1d7aa889c43d1676081b8",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test7.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "cddfe15e10a0c0f9c1e75b1feda65ba4",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test15.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "448d0800c84b59380b9f1f3aac9e8c66",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test19-codecs-interop.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "50494731bd84ea56be1e43f1bc8b8595",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test16.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "2e73d6cd3680a08441c902efc890b157",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test1.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "760913ebacfe547d9a1ee99374d1e43f",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test10.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "9c3fd0ce1c274a4c38175090d072394f",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test8.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "8dda4a5df1e7eeffd56eb129cd53f00c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test9.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "115fe9c337cf81ca80c57e82e3dbe8de",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test18.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "f14846199ecd449d62b5f16d280753ac",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test14.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "296f8b00d7cf6884c48db5afb60eaf96",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test11.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "695fa4fe8fc4224b284fcf8511a139e3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test12.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "14a4da082ac65356cbecf8df4414b8e4",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/zip.js/WebContent/tests/test5.html": {
+    "mtime": 1779014120.7185159,
+    "ast_hash": "f8e3e28cf6cf19970abcc2955c68c0df",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/basic/readme.txt": {
+    "mtime": 1779014105.960122,
+    "ast_hash": "e52012ad0bc690015bcb7739e1de468e",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/boot/boots.txt": {
+    "mtime": 1779014105.960308,
+    "ast_hash": "7b9ec48b17db526066d6b195a1502459",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/README.md": {
+    "mtime": 1779014120.6534903,
+    "ast_hash": "03d09ccfd4807f1dfa6e1be8f0b66a90",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/i8080-js/index.html": {
+    "mtime": 1779014120.655683,
+    "ast_hash": "0fb5ee461ec898911395dde0b4d0e704",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/logo-mark-dark.svg": {
+    "mtime": 1779125096.2583208,
+    "ast_hash": "7ae04b0fe3943e0c110b864ef54731b3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/favicon.svg": {
+    "mtime": 1779124851.3929584,
+    "ast_hash": "af062c5d78a9a95baa1553603416d46a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/logo.svg": {
+    "mtime": 1779124877.2329135,
+    "ast_hash": "98bbd58f6d510284d2b63ed89bb05a95",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/logo-mark.svg": {
+    "mtime": 1779124847.7760081,
+    "ast_hash": "7be897de724eb4c631d988b1827b7041",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/icons.svg": {
+    "mtime": 1778954734.9781697,
+    "ast_hash": "3b4fcfcf393eca4d264dca4a4663bc37",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/favicon-dark.svg": {
+    "mtime": 1779125099.8437893,
+    "ast_hash": "865bbf4965053549315436d3abc114ce",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/cassette-32x32.png": {
+    "mtime": 1779014105.960308,
+    "ast_hash": "a497750928ef49c4dc5a8e129156038a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/omg-cat.png": {
+    "mtime": 1779014106.1503518,
+    "ast_hash": "1a8a11e4117604f9d41ef7745469bfee",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/diskette-32x32.png": {
+    "mtime": 1779014105.960308,
+    "ast_hash": "78b37e99716d0dd502abd7c053949f80",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/boot.png": {
+    "mtime": 1779014106.1527824,
+    "ast_hash": "7e088bf430726bb14f035312949fc9d2",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/testtp.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "d43797aeae189a225c98651e397fec6a",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/vst.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "ea57aaac62cced3e26223364474e2117",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/i8253_bcd.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "b10eb77a9023854b5c0631a13867cc49",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/scrltst2_101.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "dbb7f8ba29bf7204cef018d277ca9d04",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/chkvi53.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "e00f30fab461edf3ad845f25861861d0",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/i8253.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "b7f8e62bcda9f26cf8c17862279adf8b",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/scrltst2_40.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "ba5c1b4c92a12541fe79ef4aaea8c60c",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/bord2.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "39e12fa342c27e461a3b3542430ba383",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/brdtestx.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "05424756faf3cff0a2e4ce38133bca26",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/scrltst2_98.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "c74bc64a5b470c5a0ea49fe69562be13",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/i82532.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "e725b5fa3f217894e8d0556c18748f08",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/scrltst2_113.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "2302af84a31b06a81c77f26adac44ac9",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/i82531.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "b6c903ef23945241db37248b366fead0",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/scrltst2_110.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "f65b664ebba03113c4d31d1705844691",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/test/expected/tst8253.rom.png": {
+    "mtime": 1779014106.1528316,
+    "ast_hash": "ec0d9c31a0fa7b67c2e6583c4ad7b282",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/tst8253.jpg": {
+    "mtime": 1779014106.154352,
+    "ast_hash": "15923c775b80146812da9b8958b79e92",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/i8253.jpg": {
+    "mtime": 1779014106.154352,
+    "ast_hash": "2c70b02c9d40cee24475e9d49005ef1e",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/i8253_bcd.jpg": {
+    "mtime": 1779014106.154352,
+    "ast_hash": "f656a46993a072329189e81d0fce2dcc",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/i82531.jpg": {
+    "mtime": 1779014106.154352,
+    "ast_hash": "6a970919939616a39d5366201c4d02b3",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/2016-01-13 18.48.58.jpg": {
+    "mtime": 1779014106.1533518,
+    "ast_hash": "5b3ca8ebe3982461948a8a8d7c046f62",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/public/emulator/testroms/i82532.jpg": {
+    "mtime": 1779014106.154352,
+    "ast_hash": "a9560b5b450ff8e9cf4fecfbcf6ad6ee",
+    "semantic_hash": ""
+  },
+  "/home/alex/Syncthing/projects/Mine/warehouse06/frontend/src/assets/hero.png": {
+    "mtime": 1778954734.9785533,
+    "ast_hash": "aead493361b27e7510691c5d7072dfc1",
+    "semantic_hash": ""
+  }
+}

@@ -1,0 +1,33 @@
+# Production compose example.
+#
+# Usage (from repository root):
+#   cp build/prod/config.yaml.example build/prod/config.yaml
+#   docker compose -f build/prod/docker.compose.example.yaml up --build
+# Or: make prod
+#
+# Copy and adjust for your deployment (volumes, env, ports).
+
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: build/prod/Containerfile
+    ports:
+      - "8080:8080"
+    volumes:
+      - ../../storage:/app/storage
+      - warehouse06-data:/app/data
+      - ./config.yaml:/app/config.yaml:ro
+    environment:
+      ENV: production
+      CONFIG_PATH: /app/config.yaml
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:8080/ping"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+
+volumes:
+  warehouse06-data:

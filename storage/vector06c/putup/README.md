@@ -17,6 +17,9 @@ youtube:
   - http://www.youtube.com/watch?v=WICkvztVQ-k
 screenshots:
   - screen.jpg
+files:
+  - putup.rom
+  - putup_jps.rom
 ---
 
 Красивая игра, перенесённая с MSX. Оригинал был написан на Бейсике г-ном Юйчи Аго (吾郷裕一さん),
@@ -32,3 +35,5 @@ screenshots:
 
 Рецензия редактора: https://archive.org/details/MSXmagazine198710S/page/n121/mode/2up?view=theater
 Исходный код для MSX-1: https://archive.org/details/MSXmagazine198710S/page/n205/mode/2up?view=theater
+
+![Screenshot 1](screen.jpg)

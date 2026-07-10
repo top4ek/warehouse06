@@ -2,7 +2,7 @@
 name: Рут
 ---
 
-База всякого:
+База всякого: https://caglrc.cc/scalar/categories/all/
 
 * [Авторы](authors)
 * [БК](bk)

@@ -1,0 +1,14 @@
+.git
+.DS_Store
+.idea
+.vscode
+tmp
+frontend/node_modules
+frontend/dist
+graphify-out
+*.db
+storage
+build/**/.env
+build/**/config.yaml
+frontend/test-results
+frontend/playwright-report

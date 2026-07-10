@@ -1,18 +1,28 @@
-# Environment variables
+!storage/.keep
+*.coverprofile
+*.dll
+*.dylib
+*.exe
+*.exe~
+*.out
+*.so
+*.test
 .env
-/.env*.local
-
-# Databases
-/db/*.sqlite3
-
-# Temporary files and directories
-/tmp
-!.tmp/.keep
-
-# Other common ignores
-.bundle/
-coverage/
-*.log
-
-# RSpec/Test related
-/spec/examples.txt
+.git
+.idea/
+.playwright-cli/
+build/dev/.env
+build/dev/config.yaml
+build/prod/config.yaml
+coverage.*
+dev/.env
+frontend/blob-report/
+frontend/playwright-report/
+frontend/public/emulator/
+frontend/test-results/
+go.work
+go.work.sum
+graphify-out
+profile.cov
+storage
+tmp

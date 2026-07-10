@@ -1,11 +1,8 @@
 ---
 title: Плюк
+date: 2024.09
 authors:
   - retrosouls
-screenshots:
-  - plyuk1.png
-  - plyuk2.png
-date: 2024-09
 links:
   - bk/plyuk
 ---
@@ -29,3 +26,6 @@ links:
 Музыка [Олега Никитина](../../authors/onikitin)
 
 Тестировал [Артёмка Васильев](../../authors/avasiliev)
+
+![Screenshot 1](plyuk1.png)
+![Screenshot 2](plyuk2.png)
