@@ -20,7 +20,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: node:20-alpine
+    image: node:24-alpine
     working_dir: /opt/app/frontend
     command:
       - sh

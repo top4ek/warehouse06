@@ -89,11 +89,11 @@ docker-prod: prod
 
 .PHONY: vendor-emulator
 vendor-emulator: ensure-built ## Refresh frontend/emulator-src/ from vendor.lock.json (REF=<sha> to bump vector06js)
-	$(FRONTEND_RUN) 'npm ci && npm run vendor:emulator $(if $(REF),-- --ref $(REF),)'
+	$(FRONTEND_RUN) 'apk add --no-cache git >/dev/null && npm ci && npm run vendor:emulator $(if $(REF),-- --ref $(REF),)'
 
 .PHONY: vendor-emulator-check
 vendor-emulator-check: ensure-built ## Verify vendor.lock.json matches upstream
-	$(FRONTEND_RUN) 'npm ci && npm run vendor:emulator -- --check'
+	$(FRONTEND_RUN) 'apk add --no-cache git >/dev/null && npm ci && npm run vendor:emulator -- --check'
 
 # ── Go checks (plain commands; run inside the dev container or in CI) ────────
 
