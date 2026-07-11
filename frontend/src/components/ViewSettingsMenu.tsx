@@ -38,7 +38,7 @@ export default function ViewSettingsMenu() {
     <Dropdown
       open={open}
       onOpenChange={onOpenChange}
-      overlayStyle={overlayStyle}
+      styles={{ root: overlayStyle }}
       menu={{ items, selectedKeys, style: menuStyle }}
       trigger={["click"]}
       placement="bottomRight"

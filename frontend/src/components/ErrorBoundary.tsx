@@ -4,6 +4,23 @@ import { Component, type ErrorInfo, type ReactNode } from "react";
 type Props = { children: ReactNode };
 type State = { error: Error | null };
 
+// External DOM mutations (browser translators, extensions) detach nodes React
+// still tracks; the next commit then throws NotFoundError. The tree is
+// unrecoverable in place, but a fresh page load fixes it.
+const DOM_CORRUPTION_RE = /removeChild|insertBefore|not a child of this node/;
+const DOM_RECOVERY_KEY = "warehouse06-dom-recovery";
+
+function shouldAutoReload(error: Error): boolean {
+  if (!DOM_CORRUPTION_RE.test(error.message)) return false;
+  try {
+    if (sessionStorage.getItem(DOM_RECOVERY_KEY)) return false;
+    sessionStorage.setItem(DOM_RECOVERY_KEY, "1");
+    return true;
+  } catch {
+    return false;
+  }
+}
+
 export default class ErrorBoundary extends Component<Props, State> {
   state: State = { error: null };
 
@@ -13,6 +30,9 @@ export default class ErrorBoundary extends Component<Props, State> {
 
   componentDidCatch(error: Error, info: ErrorInfo) {
     console.error("UI error:", error, info.componentStack);
+    if (shouldAutoReload(error)) {
+      window.location.reload();
+    }
   }
 
   render() {
@@ -25,7 +45,7 @@ export default class ErrorBoundary extends Component<Props, State> {
           <Alert
             type="error"
             showIcon
-            message="Something went wrong"
+            title="Something went wrong"
             description={
               staleChunk
                 ? `${this.state.error.message} — likely an outdated cached script. Reload the page (Ctrl+Shift+R).`

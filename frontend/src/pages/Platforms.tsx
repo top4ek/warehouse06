@@ -12,7 +12,7 @@ export default function Platforms() {
   usePageTitle("Platforms");
 
   if (isLoading) return <LoadingCenter />;
-  if (error) return <Alert type="error" message={error.message} showIcon />;
+  if (error) return <Alert type="error" title={error.message} showIcon />;
 
   return (
     <Flex vertical gap={24}>

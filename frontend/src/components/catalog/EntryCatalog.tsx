@@ -72,7 +72,7 @@ export default function EntryCatalog({ mode = "browse", fixedAuthor = "" }: Prop
         {loading && entries.length === 0 ? (
           <LoadingCenter />
         ) : error ? (
-          <Alert type="error" message={error} showIcon />
+          <Alert type="error" title={error} showIcon />
         ) : entries.length > 0 ? (
           <>
             {loadingPrev && (

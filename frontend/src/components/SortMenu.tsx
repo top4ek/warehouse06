@@ -37,7 +37,7 @@ export default function SortMenu() {
     <Dropdown
       open={open}
       onOpenChange={onOpenChange}
-      overlayStyle={overlayStyle}
+      styles={{ root: overlayStyle }}
       menu={{
         items,
         selectedKeys: [`field-${sortField}`, `order-${sortOrder}`],
