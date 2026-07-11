@@ -1,29 +1,5 @@
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vitest/config";
-import type { Plugin } from "vite";
-
-/** Bust browser caches of old hashed index/entry bundles after deploy. */
-function injectBuildId(): Plugin {
-  const buildId = process.env.VITE_BUILD_ID ?? "dev";
-  const reloadScript = `(function(){try{var k="warehouse06-build",b="${buildId}",p=localStorage.getItem(k);if(p&&p!==b){var rk="warehouse06-reloaded-for";if(sessionStorage.getItem(rk)===b){localStorage.setItem(k,b);return}sessionStorage.setItem(rk,b);localStorage.setItem(k,b);location.reload();return}if(b)localStorage.setItem(k,b)}catch(e){}})();`;
-  return {
-    name: "inject-build-id",
-    transformIndexHtml(html) {
-      const tags =
-        `    <meta name="warehouse06-build" content="${buildId}" />\n    <script>${reloadScript}</script>\n`;
-      let out = html;
-      if (out.includes("<script type=\"module\"")) {
-        out = out.replace("<script type=\"module\"", `${tags}    <script type="module"`);
-      } else {
-        out = out.replace("</head>", `${tags}  </head>`);
-      }
-      return out.replace(
-        /(<script type="module" crossorigin src="\/assets\/index-[^"]+\.js)(">)/,
-        `$1?v=${buildId}$2`,
-      );
-    },
-  };
-}
 
 const proxyTarget = process.env.VITE_PROXY_TARGET ?? "http://localhost:8080";
 
@@ -32,7 +8,7 @@ const storageAsset =
   "^/.+\\.(rom|fdd|zip|com|bin|r0m|png|jpe?g|gif|webp|svg|pdf|txt|html?)$";
 
 export default defineConfig({
-  plugins: [react(), injectBuildId()],
+  plugins: [react()],
   test: {
     environment: "jsdom",
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],

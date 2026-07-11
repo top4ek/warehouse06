@@ -37,7 +37,6 @@ services:
       - frontend-node-modules:/opt/app/frontend/node_modules
     environment:
       VITE_PROXY_TARGET: http://backend:8080
-      VITE_BUILD_ID: dev
     depends_on:
       backend:
         condition: service_healthy
