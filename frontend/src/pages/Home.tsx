@@ -42,7 +42,7 @@ type SectionQuery = { isLoading: boolean; error: Error | null };
 // not gate the rest of the page.
 function SectionBody({ query, children }: { query: SectionQuery; children: React.ReactNode }) {
   if (query.isLoading) return <LoadingCenter />;
-  if (query.error) return <Alert type="error" message={query.error.message} showIcon />;
+  if (query.error) return <Alert type="error" title={query.error.message} showIcon />;
   return <>{children}</>;
 }
 

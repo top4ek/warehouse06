@@ -81,7 +81,7 @@ function EntryView({ entryPath, playFilename }: { entryPath: string; playFilenam
   }
 
   if (loading) return <LoadingCenter />;
-  if (error) return <Alert type="error" message={error} showIcon />;
+  if (error) return <Alert type="error" title={error} showIcon />;
   if (!entry) return null;
 
   const youtubeId = parseYouTubeId(entry.youtube);

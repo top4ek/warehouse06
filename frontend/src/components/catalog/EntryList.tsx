@@ -1,4 +1,4 @@
-import { Avatar, Card, Col, Flex, List, Row, Tag, Typography } from "antd";
+import { Avatar, Card, Col, Flex, Row, Tag, Typography } from "antd";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { storageUrl, type Entry } from "../../api";
 import { browsePath } from "../../lib/browse";
@@ -135,42 +135,39 @@ function EntryListCompact({
 }: Pick<Props, "entries" | "authorLinks" | "onTagSelect" | "onEntryClick">) {
   return (
     <Card>
-      <List
-        dataSource={entries}
-        renderItem={(entry, index) => (
-          <List.Item
-            key={entry.path}
-            style={{ padding: "12px 0" }}
-            data-entry-path={entry.path}
-            extra={
-              entry.tags && entry.tags.length > 0 ? (
-                <Flex gap={4} wrap="wrap" justify="flex-end" style={{ maxWidth: "40%" }}>
-                  {entry.tags.map((t) => (
-                    <TagChip key={t.name} tag={t.name} onTagSelect={onTagSelect} />
-                  ))}
-                </Flex>
-              ) : undefined
-            }
-          >
-            <List.Item.Meta
-              avatar={<EntryPreview entry={entry} />}
-              title={
-                <EntryLink entry={entry} index={index} authorLinks={authorLinks} onEntryClick={onEntryClick} style={{ color: "inherit" }}>
-                  {entry.name || entry.path}
-                </EntryLink>
-              }
-              description={
-                <EntryMetaLine
-                  createdAt={entry.created_at}
-                  platform={entry.platform || entry.path}
-                  entryCount={entry.entry_count}
-                  authorMode={authorLinks}
-                />
-              }
+      {entries.map((entry, index) => (
+        <Flex
+          key={entry.path}
+          gap={16}
+          align="flex-start"
+          data-entry-path={entry.path}
+          style={{
+            padding: "12px 0",
+            borderBlockEnd:
+              index < entries.length - 1 ? "1px solid var(--ant-color-split)" : undefined,
+          }}
+        >
+          <EntryPreview entry={entry} />
+          <Flex vertical style={{ flex: 1, minWidth: 0 }}>
+            <EntryLink entry={entry} index={index} authorLinks={authorLinks} onEntryClick={onEntryClick} style={{ color: "inherit" }}>
+              {entry.name || entry.path}
+            </EntryLink>
+            <EntryMetaLine
+              createdAt={entry.created_at}
+              platform={entry.platform || entry.path}
+              entryCount={entry.entry_count}
+              authorMode={authorLinks}
             />
-          </List.Item>
-        )}
-      />
+          </Flex>
+          {entry.tags && entry.tags.length > 0 && (
+            <Flex gap={4} wrap="wrap" justify="flex-end" style={{ maxWidth: "40%" }}>
+              {entry.tags.map((t) => (
+                <TagChip key={t.name} tag={t.name} onTagSelect={onTagSelect} />
+              ))}
+            </Flex>
+          )}
+        </Flex>
+      ))}
     </Card>
   );
 }

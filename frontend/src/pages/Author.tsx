@@ -12,7 +12,7 @@ export default function AuthorPage() {
   usePageTitle(author?.name || author?.directory_name || "Author");
 
   if (isLoading) return <LoadingCenter />;
-  if (error) return <Alert type="error" message={error.message} showIcon />;
+  if (error) return <Alert type="error" title={error.message} showIcon />;
   if (!author) return null;
 
   return (

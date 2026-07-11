@@ -48,15 +48,15 @@ export default function AppMobileNav({ items, activeKey }: AppMobileNavProps) {
         placement="left"
         open={open}
         onClose={() => setOpen(false)}
-        width={280}
+        size={280}
         classNames={{ body: "app-mobile-nav-drawer__body" }}
         styles={{
           wrapper: panelStyle,
-          content: panelStyle,
+          section: panelStyle,
           header: panelStyle,
           body: panelStyle,
         }}
-        destroyOnClose
+        destroyOnHidden
       >
         <nav className="app-mobile-nav" aria-label="Main">
           {items.map((item) => {

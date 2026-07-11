@@ -1,4 +1,4 @@
-import { Button, Card, Flex, List, Typography } from "antd";
+import { Button, Card, Flex, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { storageUrl, type DirectoryItem, type FileItem } from "../api";
@@ -112,45 +112,53 @@ export default function EntrySidebarResources({
       onPrev={() => setPage((p) => p - 1)}
       onNext={() => setPage((p) => p + 1)}
     >
-      <List
-        size="small"
-        dataSource={visibleRows}
-        renderItem={(row) => {
+      <Flex vertical>
+        {visibleRows.map((row, index) => {
+          const rowStyle: React.CSSProperties = {
+            padding: "8px 0",
+            borderBlockEnd:
+              index < visibleRows.length - 1 ? "1px solid var(--ant-color-split)" : undefined,
+          };
+
           if (row.kind === "parent" || row.kind === "dir") {
             const label = row.kind === "parent" ? ".." : row.name;
             return (
-              <List.Item>
+              <div key={`${row.kind}-${row.path}`} style={rowStyle}>
                 <RouterLink to={`/${row.path}`}>{label}</RouterLink>
-              </List.Item>
+              </div>
             );
           }
 
           const { file } = row;
           const href = storageUrl(file.filepath || `${entryPath}/${file.filename}`);
           return (
-            <List.Item
-              actions={
-                isPlayable(file)
-                  ? [
-                      <Button
-                        key="play"
-                        size="small"
-                        type="primary"
-                        onClick={() => navigate(entryPlayLocation(entryPath, file.filename))}
-                      >
-                        Play
-                      </Button>,
-                    ]
-                  : undefined
-              }
+            <Flex
+              key={file.filepath || file.filename}
+              justify="space-between"
+              align="center"
+              gap={8}
+              style={rowStyle}
             >
-              <a href={href} download={file.filename} style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
+              <a
+                href={href}
+                download={file.filename}
+                style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap", minWidth: 0 }}
+              >
                 {file.filename}
               </a>
-            </List.Item>
+              {isPlayable(file) && (
+                <Button
+                  size="small"
+                  type="primary"
+                  onClick={() => navigate(entryPlayLocation(entryPath, file.filename))}
+                >
+                  Play
+                </Button>
+              )}
+            </Flex>
           );
-        }}
-      />
+        })}
+      </Flex>
     </PaginatedSection>
   );
 }
