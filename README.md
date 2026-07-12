@@ -2,6 +2,7 @@
 
 A catalog of retro software for Soviet home computers: Vector-06C, BK, Radio-86RK, and more.
 Content lives in the `storage/` git tree (markdown + files), is indexed in SQLite, and is served via a Go API and React SPA.
+Content repo can be found [here](https://github.com/top4ek/retro_files).
 
 Inspired by [caglrc.cc/scalar](https://caglrc.cc/scalar/categories/all/).
 
