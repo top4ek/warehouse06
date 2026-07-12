@@ -3,19 +3,23 @@ import { Button, Input } from "antd";
 import type { InputRef } from "antd";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 import { browsePath } from "../lib/browse";
 
 export default function SearchBar() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [query, setQuery] = useState("");
-  const [expanded, setExpanded] = useState(false);
+  const urlQuery = searchParams.get("q") ?? "";
+  const [query, setQuery] = useState(urlQuery);
+  const [expanded, setExpanded] = useState(!!urlQuery);
+  const isMobile = useMediaQuery("(max-width: 767px)");
+  // Collapsing to an icon only happens on mobile; on desktop the bar is always open.
+  const isOpen = expanded || !isMobile;
   const inputRef = useRef<InputRef>(null);
   const rootRef = useRef<HTMLDivElement>(null);
 
   // Sync the input with the ?q= URL param (adjust-during-render,
   // https://react.dev/learn/you-might-not-need-an-effect).
-  const urlQuery = searchParams.get("q") ?? "";
   const [lastUrlQuery, setLastUrlQuery] = useState(urlQuery);
   if (urlQuery !== lastUrlQuery) {
     setLastUrlQuery(urlQuery);
@@ -46,8 +50,13 @@ export default function SearchBar() {
     navigate(browsePath({ q: trimmed }));
   }
 
-  function openSearch() {
-    setExpanded(true);
+  function onTriggerClick() {
+    if (!isOpen) {
+      setExpanded(true);
+      return;
+    }
+    if (query.trim()) submit();
+    else inputRef.current?.focus();
   }
 
   function onKeyDown(e: React.KeyboardEvent<HTMLInputElement>) {
@@ -58,15 +67,15 @@ export default function SearchBar() {
   return (
     <div
       ref={rootRef}
-      className={`search-bar${expanded ? " search-bar--expanded" : ""}`}
+      className={`search-bar${isOpen ? " search-bar--expanded" : ""}`}
       role="search"
     >
       <Button
         type="text"
         icon={<SearchOutlined />}
         aria-label="Search"
-        aria-expanded={expanded}
-        onClick={openSearch}
+        aria-expanded={isOpen}
+        onClick={onTriggerClick}
         className="search-bar__trigger"
       />
       <Input

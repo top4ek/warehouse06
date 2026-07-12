@@ -146,6 +146,12 @@ body {
   background: var(--ant-color-bg-container);
 }
 
+@media (min-width: 768px) {
+  .search-bar--expanded {
+    min-width: 200px;
+  }
+}
+
 .search-bar__trigger {
   flex-shrink: 0;
 }
