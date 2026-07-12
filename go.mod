@@ -9,6 +9,7 @@ require (
 	github.com/mattn/go-sqlite3 v1.14.47
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/stretchr/testify v1.11.1
+	github.com/swaggo/files/v2 v2.0.2
 	github.com/yuin/goldmark v1.8.2
 	go.uber.org/zap v1.28.0
 	gopkg.in/yaml.v3 v3.0.1

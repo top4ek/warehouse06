@@ -1,0 +1,447 @@
+openapi: 3.0.3
+info:
+  title: warehouse06 API
+  description: >
+    Read-only public REST API for the warehouse06 archive of Vector-06C
+    retro-computer software (games, demos, tools) and their authors.
+    All endpoints are unauthenticated GET requests.
+  version: "1.0"
+servers:
+  - url: /
+tags:
+  - name: status
+    description: Content-sync status
+  - name: entries
+    description: Archive entries (games, demos, tools, etc.)
+  - name: authors
+    description: Entry authors
+  - name: taxonomy
+    description: Tags and platforms used to classify entries
+
+paths:
+  /api/status:
+    get:
+      tags: [status]
+      summary: Get sync status
+      description: Returns whether a content sync is currently running and details of the last completed sync.
+      operationId: getStatus
+      responses:
+        "200":
+          description: Current sync status.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SyncStatus"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/entries:
+    get:
+      tags: [entries]
+      summary: List entries
+      description: >
+        Returns a paginated, filterable, sortable list of archive entries.
+        Invalid `sort` values silently fall back to sorting by `name` rather
+        than returning an error.
+      operationId: listEntries
+      parameters:
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/OffsetParam"
+        - $ref: "#/components/parameters/SortParam"
+        - $ref: "#/components/parameters/OrderParam"
+        - $ref: "#/components/parameters/TagParam"
+        - $ref: "#/components/parameters/AuthorParam"
+        - $ref: "#/components/parameters/PlatformParam"
+      responses:
+        "200":
+          description: A page of entries and the total matching count.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryListResult"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/entries/search:
+    get:
+      tags: [entries]
+      summary: Full-text search entries
+      description: Full-text search over entries using SQLite FTS5.
+      operationId: searchEntries
+      parameters:
+        - $ref: "#/components/parameters/QueryParam"
+        - $ref: "#/components/parameters/LimitParam"
+        - $ref: "#/components/parameters/OffsetParam"
+      responses:
+        "200":
+          description: A page of matching entries and the total matching count.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/EntryListResult"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/entries/{path}:
+    get:
+      tags: [entries]
+      summary: Get a single entry by path
+      description: >
+        `path` is an opaque, URL-encoded key that may itself contain slashes
+        (it is matched as a single wildcard route segment server-side, not a
+        filesystem path); it is used only as a lookup key, never for file
+        access.
+      operationId: getEntry
+      parameters:
+        - name: path
+          in: path
+          required: true
+          description: URL-encoded entry path, may contain slashes.
+          schema:
+            type: string
+      responses:
+        "200":
+          description: The requested entry.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Entry"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/authors:
+    get:
+      tags: [authors]
+      summary: List authors
+      description: Returns every author, without their entries populated.
+      operationId: listAuthors
+      responses:
+        "200":
+          description: All authors.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Author"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/authors/{dir}:
+    get:
+      tags: [authors]
+      summary: Get a single author by directory name
+      operationId: getAuthor
+      parameters:
+        - name: dir
+          in: path
+          required: true
+          description: Author directory name.
+          schema:
+            type: string
+            pattern: "^[a-zA-Z0-9._-]+$"
+      responses:
+        "200":
+          description: The requested author, with their entries populated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Author"
+        "400":
+          $ref: "#/components/responses/BadRequest"
+        "404":
+          $ref: "#/components/responses/NotFound"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/tags:
+    get:
+      tags: [taxonomy]
+      summary: List tags
+      operationId: listTags
+      responses:
+        "200":
+          description: All tags.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Tag"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+  /api/platforms:
+    get:
+      tags: [taxonomy]
+      summary: List platforms
+      operationId: listPlatforms
+      responses:
+        "200":
+          description: All platforms.
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Platform"
+        "500":
+          $ref: "#/components/responses/InternalError"
+
+components:
+  parameters:
+    LimitParam:
+      name: limit
+      in: query
+      description: Maximum number of items to return.
+      schema:
+        type: integer
+        default: 50
+        maximum: 100
+    OffsetParam:
+      name: offset
+      in: query
+      description: Number of items to skip.
+      schema:
+        type: integer
+        default: 0
+        maximum: 100000
+    SortParam:
+      name: sort
+      in: query
+      description: Sort field. Unrecognized values fall back to `name`.
+      schema:
+        type: string
+        enum: [name, date, created_at, rnd]
+        default: name
+    OrderParam:
+      name: order
+      in: query
+      description: Sort direction.
+      schema:
+        type: string
+        enum: [asc, desc]
+        default: asc
+    TagParam:
+      name: tag
+      in: query
+      description: Filter to entries with this exact tag name.
+      schema:
+        type: string
+    AuthorParam:
+      name: author
+      in: query
+      description: Filter to entries by this exact author directory name.
+      schema:
+        type: string
+    PlatformParam:
+      name: platform
+      in: query
+      description: Filter to entries under this platform path (or path prefix).
+      schema:
+        type: string
+    QueryParam:
+      name: q
+      in: query
+      required: true
+      description: Full-text search query.
+      schema:
+        type: string
+
+  responses:
+    BadRequest:
+      description: The request was malformed or missing a required parameter.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    NotFound:
+      description: The requested resource does not exist.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    InternalError:
+      description: An unexpected server error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+
+  schemas:
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: string
+
+    File:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        entry_id:
+          type: integer
+          format: int64
+        filename:
+          type: string
+        filepath:
+          type: string
+        is_image:
+          type: boolean
+
+    Directory:
+      type: object
+      properties:
+        name:
+          type: string
+        path:
+          type: string
+
+    Tag:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name:
+          type: string
+        entry_count:
+          type: integer
+
+    Platform:
+      type: object
+      properties:
+        path:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        content_html:
+          type: string
+        entry_count:
+          type: integer
+
+    Entry:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        path:
+          type: string
+        name:
+          type: string
+        description:
+          type: string
+        description_html:
+          type: string
+        content_html:
+          type: string
+        date:
+          type: string
+        type:
+          type: string
+          enum: [directory, file]
+        youtube:
+          type: string
+        platform:
+          type: string
+        preview_image:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+        updated_at:
+          type: string
+          format: date-time
+        tags:
+          type: array
+          items:
+            $ref: "#/components/schemas/Tag"
+        authors:
+          type: array
+          items:
+            $ref: "#/components/schemas/Author"
+        screenshots:
+          type: array
+          items:
+            $ref: "#/components/schemas/File"
+        files:
+          type: array
+          items:
+            $ref: "#/components/schemas/File"
+        directories:
+          type: array
+          items:
+            $ref: "#/components/schemas/Directory"
+        require:
+          type: array
+          items:
+            type: string
+          description: Paths to other entries this entry depends on.
+
+    EntryListResult:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entry"
+        total:
+          type: integer
+
+    Author:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        directory_name:
+          type: string
+        name:
+          type: string
+        address:
+          type: string
+        content_html:
+          type: string
+        preview_image:
+          type: string
+        entry_count:
+          type: integer
+        entries:
+          type: array
+          items:
+            $ref: "#/components/schemas/Entry"
+
+    StorageCommit:
+      type: object
+      properties:
+        hash:
+          type: string
+        committed_at:
+          type: string
+          format: date-time
+        subject:
+          type: string
+
+    SyncStatus:
+      type: object
+      properties:
+        syncing:
+          type: boolean
+        last_synced_at:
+          type: string
+          format: date-time
+          nullable: true
+        storage_commit:
+          $ref: "#/components/schemas/StorageCommit"

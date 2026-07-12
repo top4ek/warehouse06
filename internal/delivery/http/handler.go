@@ -45,6 +45,11 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 		r.Get("/authors/{dir}", h.handleGetAuthor)
 		r.Get("/tags", h.handleListTags)
 		r.Get("/platforms", h.handleListPlatforms)
+
+		r.Get("/openapi.yaml", h.handleGetOpenAPISpec)
+		r.Get("/docs", h.handleGetDocsIndex)
+		r.Get("/docs/init.js", h.handleGetDocsInitJS)
+		r.Get("/docs/assets/*", h.handleGetDocsAssets)
 	})
 }
 
