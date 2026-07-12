@@ -103,6 +103,7 @@ func (s *Syncer) Sync(ctx context.Context) error {
 		rebuild := gitResult.Changed || s.status.LastSyncedAt().IsZero()
 		if !rebuild {
 			s.log.Info("storage unchanged after git sync, skipping database rebuild")
+			s.status.SetSuccess(time.Now(), head, hasHead)
 			return nil
 		}
 	}

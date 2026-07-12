@@ -2,8 +2,11 @@ package sync
 
 import (
 	"context"
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
+	"strings"
 	"testing"
 	"time"
 
@@ -79,6 +82,58 @@ func TestSyncer_Sync_whileRunningSkips(t *testing.T) {
 
 	err := syncer.Sync(context.Background())
 	require.NoError(t, err)
+}
+
+func TestSyncer_Sync_unchangedGitStillUpdatesLastSyncedAt(t *testing.T) {
+	remoteDir := t.TempDir()
+	initGitRepo(t, remoteDir)
+	writeStorageREADME(t, remoteDir, "vector06c/demo", "---\nname: Demo\n---\n\nBody.\n")
+	gitCommitAll(t, remoteDir, "initial")
+	remoteURL := fmt.Sprintf("file://%s", filepath.ToSlash(remoteDir))
+
+	storageDir := t.TempDir()
+	repo, err := repository.NewSQLiteRepository(":memory:", zap.NewNop())
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = repo.Close() })
+	holder := repository.NewHolder(repo, ":memory:")
+	status := NewStatus()
+	p := parser.NewParser(storageDir, zap.NewNop())
+	syncer := NewSyncer(storageDir, remoteURL, ":memory:", 0, holder, p, status, zap.NewNop())
+
+	require.NoError(t, syncer.Sync(context.Background()))
+	firstSyncedAt := status.LastSyncedAt()
+	require.False(t, firstSyncedAt.IsZero())
+
+	time.Sleep(time.Millisecond)
+
+	// No changes pushed to remoteDir since the first sync: the second sync
+	// must skip the database rebuild but still advance LastSyncedAt.
+	require.NoError(t, syncer.Sync(context.Background()))
+	secondSyncedAt := status.LastSyncedAt()
+	assert.True(t, secondSyncedAt.After(firstSyncedAt),
+		"expected LastSyncedAt to advance on an unchanged sync, got first=%v second=%v", firstSyncedAt, secondSyncedAt)
+}
+
+func initGitRepo(t *testing.T, dir string) {
+	t.Helper()
+	runGit(t, dir, "init")
+	runGit(t, dir, "config", "user.email", "test@example.com")
+	runGit(t, dir, "config", "user.name", "Test")
+}
+
+func gitCommitAll(t *testing.T, dir, message string) {
+	t.Helper()
+	runGit(t, dir, "add", "-A")
+	runGit(t, dir, "commit", "-m", message)
+}
+
+func runGit(t *testing.T, dir string, args ...string) {
+	t.Helper()
+	cmd := exec.Command("git", args...)
+	cmd.Dir = dir
+	cmd.Env = append(os.Environ(), "GIT_CONFIG_GLOBAL=/dev/null", "GIT_CONFIG_SYSTEM=/dev/null")
+	out, err := cmd.CombinedOutput()
+	require.NoError(t, err, strings.TrimSpace(string(out)))
 }
 
 func TestSyncer_Run_intervalZero(t *testing.T) {

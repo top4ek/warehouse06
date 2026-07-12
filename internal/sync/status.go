@@ -8,7 +8,7 @@ import (
 	"warehouse06/internal/gitdate"
 )
 
-// Status tracks sync progress and the last successful rebuild snapshot.
+// Status tracks sync progress and the last successful sync check.
 type Status struct {
 	syncing atomic.Bool
 
@@ -40,7 +40,8 @@ func (s *Status) SetSuccess(syncedAt time.Time, commit gitdate.Commit, hasCommit
 	}
 }
 
-// LastSyncedAt returns the time of the last successful database rebuild.
+// LastSyncedAt returns the time of the last successful sync check, whether
+// or not it resulted in a database rebuild.
 func (s *Status) LastSyncedAt() time.Time {
 	s.mu.RLock()
 	defer s.mu.RUnlock()
