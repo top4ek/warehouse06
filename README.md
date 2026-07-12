@@ -99,6 +99,8 @@ To load a YAML file, set `CONFIG_PATH` to its path. If `CONFIG_PATH` is unset or
 
 ## API
 
+Interactive documentation (schemas, parameters, try-it-out) is served at `/api/docs` when the server is running, generated from the OpenAPI spec at [`internal/delivery/http/docs/openapi.yaml`](internal/delivery/http/docs/openapi.yaml).
+
 All routes are under the `/api` prefix:
 
 | Method | Path | Description |
