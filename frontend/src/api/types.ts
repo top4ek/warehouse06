@@ -1,5 +1,6 @@
 export type {
   Author,
+  ControlsConfig,
   DirectoryItem,
   Entry,
   EntryListResult,

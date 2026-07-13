@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"database/sql"
+	"encoding/json"
 	"errors"
 	"fmt"
 	"strings"
@@ -202,16 +203,20 @@ func scanEntrySummary(rows interface {
 
 func (r *SQLiteRepository) GetEntryByPath(ctx context.Context, path string) (*domain.Entry, error) {
 	sqlQuery := `
-		SELECT id, path, name, description, content_html, date, type, youtube, created_at
+		SELECT id, path, name, description, content_html, date, type, youtube, COALESCE(controls, ''), created_at
 		FROM entries
 		WHERE path = ?
 	`
 
 	var e domain.Entry
 	var createdAt sql.NullTime
+	var controls string
 	err := r.db.QueryRowContext(ctx, sqlQuery, path).Scan(
-		&e.ID, &e.Path, &e.Name, &e.Description, &e.ContentHTML, &e.Date, &e.Type, &e.Youtube, &createdAt,
+		&e.ID, &e.Path, &e.Name, &e.Description, &e.ContentHTML, &e.Date, &e.Type, &e.Youtube, &controls, &createdAt,
 	)
+	if controls != "" {
+		e.Controls = json.RawMessage(controls)
+	}
 	if createdAt.Valid {
 		e.CreatedAt = createdAt.Time
 	}

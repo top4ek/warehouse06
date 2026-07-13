@@ -96,6 +96,7 @@ func (r *SQLiteRepository) initSchema() error {
 			date TEXT,
 			type TEXT,
 			youtube TEXT,
+			controls TEXT,
 			created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
 			updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
 		);`,
@@ -174,6 +175,13 @@ func (r *SQLiteRepository) initSchema() error {
 		if _, err := tx.ExecContext(ctx, query); err != nil {
 			return fmt.Errorf("failed to execute query %q: %w", query, err)
 		}
+	}
+
+	// File-backed databases created before the controls column existed need it
+	// added; on fresh databases the ALTER fails as a duplicate and is skipped.
+	if _, err := tx.ExecContext(ctx, `ALTER TABLE entries ADD COLUMN controls TEXT`); err != nil &&
+		!strings.Contains(err.Error(), "duplicate column name") {
+		return fmt.Errorf("failed to add controls column: %w", err)
 	}
 
 	return tx.Commit()

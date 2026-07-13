@@ -51,6 +51,29 @@ func TestParser_ParseFile(t *testing.T) {
 	assert.Contains(t, entry.ContentHTML, "Vector game")
 }
 
+func TestParser_ParseFile_controls(t *testing.T) {
+	dir := t.TempDir()
+	readme := filepath.Join(dir, "README.md")
+	content := "---\nname: Game\ncontrols:\n  rows:\n    - [~, up, f12]\n    - [left, down, right]\n---\n\nText.\n"
+	require.NoError(t, os.WriteFile(readme, []byte(content), 0o644))
+
+	p := NewParser(dir, zap.NewNop())
+	entry, _, err := p.ParseFile(readme)
+	require.NoError(t, err)
+	assert.JSONEq(t, `{"rows":[[null,"up","f12"],["left","down","right"]]}`, string(entry.Controls))
+}
+
+func TestParser_ParseFile_noControls(t *testing.T) {
+	dir := t.TempDir()
+	readme := filepath.Join(dir, "README.md")
+	require.NoError(t, os.WriteFile(readme, []byte("---\nname: Game\n---\n\nText.\n"), 0o644))
+
+	p := NewParser(dir, zap.NewNop())
+	entry, _, err := p.ParseFile(readme)
+	require.NoError(t, err)
+	assert.Empty(t, entry.Controls)
+}
+
 func TestIsRelativeResource(t *testing.T) {
 	assert.True(t, isRelativeResource("screenshot.png"))
 	assert.False(t, isRelativeResource("/absolute.png"))

@@ -28,6 +28,16 @@ export const directorySchema = z.object({
   path: z.string(),
 });
 
+const controlCellSchema = z.union([
+  z.null(),
+  z.string(),
+  z.object({ key: z.string(), label: z.string().optional() }),
+]);
+
+export const controlsSchema = z.object({
+  rows: z.array(z.array(controlCellSchema)),
+});
+
 export const entrySchema = z.object({
   id: z.number(),
   path: z.string(),
@@ -47,6 +57,8 @@ export const entrySchema = z.object({
   files: z.array(fileSchema).optional(),
   directories: z.array(directorySchema).optional(),
   require: z.array(z.string()).optional(),
+  // A malformed controls frontmatter must not invalidate the whole entry.
+  controls: controlsSchema.nullish().catch(null),
 });
 
 export const entryListResultSchema = z.object({
@@ -80,6 +92,7 @@ export const syncStatusSchema = z.object({
   storage_commit: storageCommitSchema.optional(),
 });
 
+export type ControlsConfig = z.infer<typeof controlsSchema>;
 export type Tag = z.infer<typeof tagSchema>;
 export type Author = z.infer<typeof authorSchema>;
 export type FileItem = z.infer<typeof fileSchema>;

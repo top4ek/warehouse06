@@ -1,4 +1,5 @@
 import {
+  ControlOutlined,
   FullscreenExitOutlined,
   FullscreenOutlined,
   QuestionCircleOutlined,
@@ -6,8 +7,11 @@ import {
 import { Button, theme } from "antd";
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import UiWindow from "./common/UiWindow";
+import EmulatorControls from "./EmulatorControls";
+import type { ControlsConfig } from "../api/types";
 import { emulatorFrameSrc } from "../lib/emulator";
 import { hostKeyCode, postEmulatorKey } from "../lib/emulatorInput";
+import { useMediaQuery } from "../hooks/useMediaQuery";
 
 const hotkeys = [
   { key: "F11", desc: "Перезагрузка (БЛК+ВВОД)" },
@@ -39,16 +43,20 @@ type Props = {
   open: boolean;
   romUrl: string;
   onClose: () => void;
+  controls?: ControlsConfig | null;
 };
 
-export default function EmulatorDialog({ open, romUrl, onClose }: Props) {
+export default function EmulatorDialog({ open, romUrl, onClose, controls }: Props) {
   const { token } = theme.useToken();
+  const isMobile = useMediaQuery("(max-width: 767px)");
   const [showHelp, setShowHelp] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
+  const [controlsVisible, setControlsVisible] = useState(isMobile);
   const [screenSize, setScreenSize] = useState<ScreenSize>({ width: 960, height: 720 });
   const windowRef = useRef<HTMLDivElement>(null);
   const frameRef = useRef<HTMLIFrameElement>(null);
   const helpRef = useRef<HTMLDivElement>(null);
+  const controlsRef = useRef<HTMLDivElement>(null);
   const viewportMargin = token.marginXL;
 
   const frameSrc = useMemo(() => {
@@ -61,7 +69,9 @@ export default function EmulatorDialog({ open, romUrl, onClose }: Props) {
   const [wasOpen, setWasOpen] = useState(open);
   if (open !== wasOpen) {
     setWasOpen(open);
-    if (!open) {
+    if (open) {
+      setControlsVisible(isMobile);
+    } else {
       setShowHelp(false);
       setFullscreen(false);
     }
@@ -72,12 +82,13 @@ export default function EmulatorDialog({ open, romUrl, onClose }: Props) {
 
     function update() {
       const helpH = showHelp ? (helpRef.current?.offsetHeight ?? 0) : 0;
+      const controlsH = controlsVisible ? (controlsRef.current?.offsetHeight ?? 0) : 0;
       setScreenSize(
         fitScreen4x3(
           window.innerWidth,
           window.innerHeight,
           viewportMargin,
-          TITLEBAR_CHROME + helpH,
+          TITLEBAR_CHROME + helpH + controlsH,
         ),
       );
     }
@@ -85,7 +96,7 @@ export default function EmulatorDialog({ open, romUrl, onClose }: Props) {
     update();
     window.addEventListener("resize", update);
     return () => window.removeEventListener("resize", update);
-  }, [open, fullscreen, showHelp, viewportMargin]);
+  }, [open, fullscreen, showHelp, controlsVisible, viewportMargin]);
 
   useEffect(() => {
     function onFullscreenChange() {
@@ -200,6 +211,14 @@ export default function EmulatorDialog({ open, romUrl, onClose }: Props) {
           <Button
             type="text"
             size="small"
+            icon={<ControlOutlined />}
+            onClick={() => setControlsVisible((v) => !v)}
+            aria-pressed={controlsVisible}
+            aria-label="On-screen controls"
+          />
+          <Button
+            type="text"
+            size="small"
             icon={fullscreen ? <FullscreenExitOutlined /> : <FullscreenOutlined />}
             onClick={() => void toggleFullscreen()}
             aria-label="Fullscreen"
@@ -242,11 +261,23 @@ export default function EmulatorDialog({ open, romUrl, onClose }: Props) {
           className="ui-window__emulator-frame"
           style={{
             width: "100%",
-            height: fullscreen ? "100%" : screenSize.height,
+            // In fullscreen with the controls panel below, the frame is sized
+            // by flex (see .ui-window--fullscreen rules) instead of 100%,
+            // which would overflow by the panel height.
+            height: fullscreen ? (controlsVisible ? undefined : "100%") : screenSize.height,
             border: 0,
             display: "block",
           }}
         />
+      )}
+
+      {open && controlsVisible && (
+        <div ref={controlsRef}>
+          <EmulatorControls
+            controls={controls}
+            onKey={(subcmd, keycode) => postEmulatorKey(frameRef.current, subcmd, keycode)}
+          />
+        </div>
       )}
     </UiWindow>
   );

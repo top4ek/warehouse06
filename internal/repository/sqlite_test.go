@@ -2,6 +2,7 @@ package repository
 
 import (
 	"context"
+	"encoding/json"
 	"testing"
 
 	"github.com/stretchr/testify/assert"
@@ -67,6 +68,7 @@ func seedCatalog(t *testing.T, repo *SQLiteRepository) {
 			Description: "A demo game on Vector-06C",
 			ContentHTML: "<p>demo game content</p>",
 			Type:        domain.EntryTypeDirectory,
+			Controls:    json.RawMessage(`{"rows":[["up","f12"]]}`),
 			Tags:        []domain.Tag{{Name: "demo"}},
 			Authors:     []domain.Author{{DirectoryName: "alice"}},
 			Files: []domain.File{
@@ -115,6 +117,7 @@ func TestSQLiteRepository_GetEntryByPath_withRelations(t *testing.T) {
 	require.NoError(t, err)
 	assert.Equal(t, "Demo", entry.Name)
 	assert.Equal(t, "vector06c", entry.Platform)
+	assert.JSONEq(t, `{"rows":[["up","f12"]]}`, string(entry.Controls))
 	require.Len(t, entry.Tags, 1)
 	assert.Equal(t, "demo", entry.Tags[0].Name)
 	require.Len(t, entry.Authors, 1)

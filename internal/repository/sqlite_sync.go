@@ -29,11 +29,11 @@ func (r *SQLiteRepository) SaveEntriesAndAuthors(ctx context.Context, entries []
 	defer upsertAuthor.Close()
 
 	upsertEntry, err := tx.PrepareContext(ctx,
-		`INSERT INTO entries (path, name, description, content_html, date, type, youtube, created_at)
-		 VALUES (?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP))
+		`INSERT INTO entries (path, name, description, content_html, date, type, youtube, controls, created_at)
+		 VALUES (?, ?, ?, ?, ?, ?, ?, ?, COALESCE(?, CURRENT_TIMESTAMP))
 		 ON CONFLICT(path) DO UPDATE SET
 		 name=excluded.name, description=excluded.description, content_html=excluded.content_html,
-		 date=excluded.date, type=excluded.type, youtube=excluded.youtube,
+		 date=excluded.date, type=excluded.type, youtube=excluded.youtube, controls=excluded.controls,
 		 created_at=COALESCE(excluded.created_at, entries.created_at)
 		 RETURNING id`)
 	if err != nil {
@@ -104,7 +104,7 @@ func (r *SQLiteRepository) SaveEntriesAndAuthors(ctx context.Context, entries []
 		}
 		var entryID int64
 		if err := upsertEntry.QueryRowContext(ctx,
-			e.Path, e.Name, e.Description, e.ContentHTML, e.Date, e.Type, e.Youtube, createdAt).Scan(&entryID); err != nil {
+			e.Path, e.Name, e.Description, e.ContentHTML, e.Date, e.Type, e.Youtube, string(e.Controls), createdAt).Scan(&entryID); err != nil {
 			return fmt.Errorf("failed to insert entry %s: %w", e.Path, err)
 		}
 

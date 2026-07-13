@@ -2,6 +2,7 @@ package parser
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"io/fs"
@@ -62,6 +63,7 @@ type Frontmatter struct {
 	Youtube     interface{} `yaml:"youtube"`
 	Require     []string    `yaml:"require"`
 	Address     string      `yaml:"address"` // For authors
+	Controls    interface{} `yaml:"controls"`
 }
 
 func (p *Parser) ParseFile(path string) (*domain.Entry, *Frontmatter, error) {
@@ -110,12 +112,22 @@ func (p *Parser) ParseFile(path string) (*domain.Entry, *Frontmatter, error) {
 		}
 	}
 
+	var controlsJSON []byte
+	if fm.Controls != nil {
+		if data, err := json.Marshal(fm.Controls); err != nil {
+			p.log.Warn("failed to encode controls frontmatter", zap.String("path", path), zap.Error(err))
+		} else {
+			controlsJSON = data
+		}
+	}
+
 	entry := &domain.Entry{
 		Path:        relPath,
 		Name:        fm.Name,
 		ContentHTML: contentHTML,
 		Date:        dateStr,
 		Youtube:     youtubeStr,
+		Controls:    controlsJSON,
 		Type:        domain.EntryTypeDirectory,
 	}
 

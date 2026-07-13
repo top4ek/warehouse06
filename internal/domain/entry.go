@@ -1,6 +1,9 @@
 package domain
 
-import "time"
+import (
+	"encoding/json"
+	"time"
+)
 
 type EntryType string
 
@@ -19,10 +22,13 @@ type Entry struct {
 	Date            string    `json:"date"`
 	Type            EntryType `json:"type"`
 	Youtube         string    `json:"youtube,omitempty"`
-	Platform        string    `json:"platform,omitempty"`
-	PreviewImage    string    `json:"preview_image,omitempty"`
-	CreatedAt       time.Time `json:"created_at"`
-	UpdatedAt       time.Time `json:"updated_at"`
+	// Controls is the raw JSON of the `controls` frontmatter (on-screen
+	// emulator gamepad layout); the frontend validates its structure.
+	Controls     json.RawMessage `json:"controls,omitempty"`
+	Platform     string          `json:"platform,omitempty"`
+	PreviewImage string          `json:"preview_image,omitempty"`
+	CreatedAt    time.Time       `json:"created_at"`
+	UpdatedAt    time.Time       `json:"updated_at"`
 
 	// Relations
 	Tags        []Tag       `json:"tags,omitempty"`

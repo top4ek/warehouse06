@@ -3,12 +3,32 @@ import { defineConfig } from "vitest/config";
 
 const proxyTarget = process.env.VITE_PROXY_TARGET ?? "http://localhost:8080";
 
-/** Storage / catalog file extensions served by the Go backend, not Vite. */
+/**
+ * Storage / catalog file extensions served by the Go backend, not Vite.
+ * Matched against the full request URL, so [^?] keeps a query string
+ * (e.g. the /entry?play=game.rom deep link) from counting as an extension,
+ * and /emulator/ stays with Vite (see the serve-emulator-index plugin).
+ */
 const storageAsset =
-  "^/.+\\.(rom|fdd|zip|com|bin|r0m|png|jpe?g|gif|webp|svg|pdf|txt|html?)$";
+  "^/(?!emulator/)[^?]+\\.(rom|fdd|zip|com|bin|r0m|png|jpe?g|gif|webp|svg|pdf|txt|html?)$";
 
 export default defineConfig({
-  plugins: [react()],
+  plugins: [
+    react(),
+    // In dev the SPA fallback would swallow /emulator/?i:<rom>; serve the
+    // bundled emulator page from public/ like the Go backend does in prod.
+    {
+      name: "serve-emulator-index",
+      configureServer(server) {
+        server.middlewares.use((req, _res, next) => {
+          if (req.url === "/emulator/" || req.url?.startsWith("/emulator/?")) {
+            req.url = "/emulator/index.html";
+          }
+          next();
+        });
+      },
+    },
+  ],
   test: {
     environment: "jsdom",
     include: ["src/**/*.test.ts", "src/**/*.test.tsx"],

@@ -211,7 +211,12 @@ function EntryView({ entryPath, playFilename }: { entryPath: string; playFilenam
         </Row>
       </Card>
 
-      <EmulatorDialog open={emulatorOpen} romUrl={currentRom} onClose={closeEmulator} />
+      <EmulatorDialog
+        open={emulatorOpen}
+        romUrl={currentRom}
+        onClose={closeEmulator}
+        controls={entry.controls}
+      />
       <VideoDialog open={videoOpen} youtubeId={youtubeId} onClose={() => setVideoOpen(false)} />
     </Flex>
   );
