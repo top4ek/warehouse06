@@ -102,7 +102,7 @@ test("default gamepad shows without controls frontmatter and toggler hides it", 
   await openEmulator(page);
   const panel = page.locator(".emulator-controls");
   await expect(panel).toBeVisible();
-  await expect(panel.getByRole("button", { name: "Рестарт" })).toBeVisible();
+  await expect(panel.getByRole("button", { name: "БЛК+СБР" })).toBeVisible();
   await expect(panel.getByRole("button", { name: "Пробел" })).toBeVisible();
 
   const toggler = page.getByRole("button", { name: "On-screen controls" });
