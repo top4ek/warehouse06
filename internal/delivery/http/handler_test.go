@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/http/httptest"
+	"strings"
 	"testing"
 	"time"
 
@@ -137,6 +138,53 @@ func TestHandler_SearchEntries_WithData(t *testing.T) {
 	require.Len(t, result.Items, 1)
 	assert.Equal(t, "Demo", result.Items[0].Name)
 	assert.Equal(t, 1, result.Total)
+}
+
+func TestHandler_SearchEntries_BySHA256(t *testing.T) {
+	h, holder, _ := newTestHandler(t)
+	const sha = "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+	require.NoError(t, holder.Get().SaveEntriesAndAuthors(t.Context(), []*domain.Entry{
+		{
+			Path:        "bk/rom",
+			Name:        "ROM Entry",
+			Description: "has a hashed file",
+			ContentHTML: "<p>rom</p>",
+			Type:        domain.EntryTypeDirectory,
+			Files: []domain.File{
+				{Filename: "game.rom", Filepath: "bk/rom/game.rom", Size: 1024, SHA256: sha},
+			},
+		},
+		{
+			Path:        "bk/other",
+			Name:        "Other",
+			Description: "no matching hash",
+			ContentHTML: "<p>other</p>",
+			Type:        domain.EntryTypeDirectory,
+		},
+	}, nil))
+
+	// Uppercase input must still match the stored lowercase digest.
+	w := serve(t, h, http.MethodGet, "/api/entries/search?q="+strings.ToUpper(sha))
+	require.Equal(t, http.StatusOK, w.Code)
+
+	var result domain.EntryListResult
+	require.NoError(t, json.NewDecoder(w.Body).Decode(&result))
+	require.Len(t, result.Items, 1)
+	assert.Equal(t, "ROM Entry", result.Items[0].Name)
+	assert.Equal(t, 1, result.Total)
+
+	// A copied part of the digest - prefix, middle substring, or uppercased -
+	// still resolves to the owning entry.
+	for _, frag := range []string{sha[:8], sha[10:30], strings.ToUpper(sha[20:40])} {
+		w := serve(t, h, http.MethodGet, "/api/entries/search?q="+frag)
+		require.Equalf(t, http.StatusOK, w.Code, "fragment %q", frag)
+
+		var res domain.EntryListResult
+		require.NoError(t, json.NewDecoder(w.Body).Decode(&res))
+		require.Lenf(t, res.Items, 1, "fragment %q", frag)
+		assert.Equalf(t, "ROM Entry", res.Items[0].Name, "fragment %q", frag)
+		assert.Equalf(t, 1, res.Total, "fragment %q", frag)
+	}
 }
 
 func seedHandlerCatalog(t *testing.T, holder *repository.Holder) {

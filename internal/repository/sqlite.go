@@ -131,6 +131,8 @@ func (r *SQLiteRepository) initSchema() error {
 			filename TEXT NOT NULL,
 			filepath TEXT NOT NULL,
 			is_image BOOLEAN DEFAULT 0,
+			size INTEGER DEFAULT 0,
+			sha256 TEXT DEFAULT '',
 			FOREIGN KEY(entry_id) REFERENCES entries(id) ON DELETE CASCADE
 		);`,
 		`CREATE TABLE IF NOT EXISTS entry_requires (
@@ -182,6 +184,17 @@ func (r *SQLiteRepository) initSchema() error {
 	if _, err := tx.ExecContext(ctx, `ALTER TABLE entries ADD COLUMN controls TEXT`); err != nil &&
 		!strings.Contains(err.Error(), "duplicate column name") {
 		return fmt.Errorf("failed to add controls column: %w", err)
+	}
+
+	// Likewise, file-backed databases predating the file size/hash columns need
+	// them added; duplicate-column errors on fresh databases are ignored.
+	if _, err := tx.ExecContext(ctx, `ALTER TABLE files ADD COLUMN size INTEGER DEFAULT 0`); err != nil &&
+		!strings.Contains(err.Error(), "duplicate column name") {
+		return fmt.Errorf("failed to add files.size column: %w", err)
+	}
+	if _, err := tx.ExecContext(ctx, `ALTER TABLE files ADD COLUMN sha256 TEXT DEFAULT ''`); err != nil &&
+		!strings.Contains(err.Error(), "duplicate column name") {
+		return fmt.Errorf("failed to add files.sha256 column: %w", err)
 	}
 
 	return tx.Commit()

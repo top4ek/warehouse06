@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 
 	"github.com/go-chi/chi/v5"
 	"go.uber.org/zap"
@@ -17,6 +18,11 @@ import (
 )
 
 var authorDirPattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
+
+// sha256Pattern matches a partial SHA-256 hex digest (8-64 hex chars), the shape
+// of a pasted file hash or a copied part of one. The 8-char minimum keeps
+// ordinary hex-ish search words from being treated as hashes.
+var sha256Pattern = regexp.MustCompile(`^[0-9a-fA-F]{8,64}$`)
 
 type Handler struct {
 	log        *zap.Logger
@@ -121,6 +127,13 @@ func (h *Handler) handleSearchEntries(w http.ResponseWriter, r *http.Request) {
 	limit := parseListLimit(r.URL.Query().Get("limit"))
 	offset := parseListOffset(r.URL.Query().Get("offset"))
 
+	// A pasted file hash (or part of one) is an identifier, not text: look it up
+	// against the stored file digests instead of the FTS content index.
+	if trimmed := strings.TrimSpace(query); sha256Pattern.MatchString(trimmed) {
+		h.searchBySHA256(w, r, strings.ToLower(trimmed), limit, offset)
+		return
+	}
+
 	ftsQuery := repository.FormatFTSQuery(query)
 	if ftsQuery == "" {
 		writeJSONError(w, http.StatusBadRequest, "Invalid query parameter 'q'")
@@ -144,6 +157,31 @@ func (h *Handler) handleSearchEntries(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		h.log.Error("failed to count search results", zap.Error(err))
+		writeJSONError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	h.respondJSON(w, domain.EntryListResult{Items: entries, Total: total})
+}
+
+func (h *Handler) searchBySHA256(w http.ResponseWriter, r *http.Request, sha256 string, limit, offset int) {
+	repo := h.holder.Get()
+	entries, err := repo.SearchEntriesBySHA256(r.Context(), sha256, limit, offset)
+	if err != nil {
+		if isRequestCanceled(err) {
+			return
+		}
+		h.log.Error("failed to search entries by sha256", zap.Error(err))
+		writeJSONError(w, http.StatusInternalServerError, "Internal Server Error")
+		return
+	}
+
+	total, err := repo.CountEntriesBySHA256(r.Context(), sha256)
+	if err != nil {
+		if isRequestCanceled(err) {
+			return
+		}
+		h.log.Error("failed to count sha256 search results", zap.Error(err))
 		writeJSONError(w, http.StatusInternalServerError, "Internal Server Error")
 		return
 	}

@@ -81,7 +81,7 @@ func (r *SQLiteRepository) SaveEntriesAndAuthors(ctx context.Context, entries []
 	defer insRequire.Close()
 
 	insFile, err := tx.PrepareContext(ctx,
-		`INSERT INTO files (entry_id, filename, filepath, is_image) VALUES (?, ?, ?, ?)`)
+		`INSERT INTO files (entry_id, filename, filepath, is_image, size, sha256) VALUES (?, ?, ?, ?, ?, ?)`)
 	if err != nil {
 		return fmt.Errorf("prepare file insert: %w", err)
 	}
@@ -145,7 +145,7 @@ func (r *SQLiteRepository) SaveEntriesAndAuthors(ctx context.Context, entries []
 
 		allFiles := append(e.Screenshots, e.Files...)
 		for _, f := range allFiles {
-			if _, err := insFile.ExecContext(ctx, entryID, f.Filename, f.Filepath, f.IsImage); err != nil {
+			if _, err := insFile.ExecContext(ctx, entryID, f.Filename, f.Filepath, f.IsImage, f.Size, f.SHA256); err != nil {
 				return err
 			}
 		}

@@ -35,6 +35,9 @@ func SecurityHeaders(next http.Handler) http.Handler {
 			"default-src 'self'; "+
 				"img-src 'self' data: https://img.youtube.com https://i.ytimg.com; "+
 				"frame-src 'self' https://www.youtube.com; "+
+				// blob: allows the in-browser bin2wav tape-audio player to
+				// load its generated WAV via an object URL.
+				"media-src 'self' blob:; "+
 				"style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; "+
 				"font-src 'self' https://fonts.gstatic.com; "+
 				"script-src 'self'; "+

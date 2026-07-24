@@ -21,6 +21,8 @@ export const fileSchema = z.object({
   filename: z.string(),
   filepath: z.string(),
   is_image: z.boolean(),
+  size: z.number().optional(),
+  sha256: z.string().optional(),
 });
 
 export const directorySchema = z.object({

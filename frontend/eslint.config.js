@@ -9,7 +9,7 @@ export default tseslint.config(
   reactHooks.configs.flat["recommended-latest"],
   reactRefresh.configs.vite,
   {
-    ignores: ["dist/**", "public/emulator/**", "emulator-src/**"],
+    ignores: ["dist/**", "public/emulator/**", "emulator-src/**", "src/vendor/**"],
   },
   {
     // Context modules intentionally export hooks/constants next to their

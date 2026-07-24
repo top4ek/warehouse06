@@ -19,6 +19,8 @@ func TestSecurityHeaders(t *testing.T) {
 
 	assert.Equal(t, http.StatusOK, rec.Code)
 	assert.Contains(t, rec.Header().Get("Content-Security-Policy"), "default-src 'self'")
+	// blob: media is required by the in-browser tape-audio player.
+	assert.Contains(t, rec.Header().Get("Content-Security-Policy"), "media-src 'self' blob:")
 	assert.Equal(t, "nosniff", rec.Header().Get("X-Content-Type-Options"))
 	assert.Equal(t, "SAMEORIGIN", rec.Header().Get("X-Frame-Options"))
 	assert.Equal(t, "strict-origin-when-cross-origin", rec.Header().Get("Referrer-Policy"))
