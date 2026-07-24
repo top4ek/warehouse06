@@ -67,6 +67,8 @@ type File struct {
 	Filename string `json:"filename"`
 	Filepath string `json:"filepath"`
 	IsImage  bool   `json:"is_image"`
+	Size     int64  `json:"size"`
+	SHA256   string `json:"sha256"`
 }
 
 type Directory struct {

@@ -1,8 +1,12 @@
-import { Button, Card, Flex, Typography } from "antd";
+import { CaretRightOutlined, InfoCircleOutlined, PauseOutlined } from "@ant-design/icons";
+import { Button, Card, Flex, Popover, Typography } from "antd";
 import { useMemo, useState } from "react";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { storageUrl, type DirectoryItem, type FileItem } from "../api";
+import { useTapePlayer } from "../hooks/useTapePlayer";
+import { formatBytes } from "../lib/format";
 import { entryPlayLocation } from "../lib/playRoute";
+import { canPlayWav } from "../lib/tapeAudio";
 
 const PAGE_SIZE = 50;
 
@@ -71,6 +75,31 @@ function PaginatedSection({
   );
 }
 
+function FileInfoContent({ file }: { file: FileItem }) {
+  const size = formatBytes(file.size);
+  return (
+    <Flex vertical gap={4} style={{ maxWidth: 320 }}>
+      <Typography.Text>
+        Size: {size ?? "-"}
+      </Typography.Text>
+      <div>
+        <Typography.Text>SHA256:</Typography.Text>
+        {file.sha256 ? (
+          <Typography.Text
+            code
+            copyable
+            style={{ display: "block", wordBreak: "break-all" }}
+          >
+            {file.sha256}
+          </Typography.Text>
+        ) : (
+          <Typography.Text> -</Typography.Text>
+        )}
+      </div>
+    </Flex>
+  );
+}
+
 export default function EntrySidebarResources({
   directories,
   files,
@@ -78,6 +107,7 @@ export default function EntrySidebarResources({
   isPlayable,
 }: Props) {
   const navigate = useNavigate();
+  const { playingKey, pendingKey, toggle } = useTapePlayer();
   const [page, setPage] = useState(0);
 
   const parent = parentPath(entryPath);
@@ -130,10 +160,12 @@ export default function EntrySidebarResources({
           }
 
           const { file } = row;
+          const rowKey = file.filepath || file.filename;
           const href = storageUrl(file.filepath || `${entryPath}/${file.filename}`);
+          const playingTape = playingKey === rowKey;
           return (
             <Flex
-              key={file.filepath || file.filename}
+              key={rowKey}
               justify="space-between"
               align="center"
               gap={8}
@@ -146,15 +178,33 @@ export default function EntrySidebarResources({
               >
                 {file.filename}
               </a>
-              {isPlayable(file) && (
-                <Button
-                  size="small"
-                  type="primary"
-                  onClick={() => navigate(entryPlayLocation(entryPath, file.filename))}
+              <Flex gap={4} align="center" style={{ flexShrink: 0 }}>
+                <Popover
+                  trigger="click"
+                  title="File info"
+                  content={<FileInfoContent file={file} />}
                 >
-                  Play
-                </Button>
-              )}
+                  <Button size="small" icon={<InfoCircleOutlined />} aria-label="File info" />
+                </Popover>
+                {canPlayWav(file.filename) && (
+                  <Button
+                    size="small"
+                    aria-label={playingTape ? "Stop tape audio" : "Play tape audio"}
+                    loading={pendingKey === rowKey}
+                    icon={playingTape ? <PauseOutlined /> : <CaretRightOutlined />}
+                    onClick={() => toggle(rowKey, href, file.filename)}
+                  />
+                )}
+                {isPlayable(file) && (
+                  <Button
+                    size="small"
+                    type="primary"
+                    onClick={() => navigate(entryPlayLocation(entryPath, file.filename))}
+                  >
+                    Run
+                  </Button>
+                )}
+              </Flex>
             </Flex>
           );
         })}

@@ -131,6 +131,66 @@ function vendorZipJs(srcRoot, destRoot) {
   );
 }
 
+// bin2wav's tape.js/makewav.js are pure-JS but CommonJS; adapt them to ESM so
+// the React bundle can import them. Destination is under src/ (unlike the other
+// vendored trees) because these are part of the Vite/TS module graph.
+const BIN2WAV_DEST = path.join(frontendDir, "src", "vendor", "bin2wav");
+
+function replaceOnce(text, needle, replacement, file) {
+  if (!text.includes(needle)) {
+    throw new Error(`bin2wav ${file}: expected snippet not found (upstream drift?):\n${needle}`);
+  }
+  return text.replace(needle, replacement);
+}
+
+function vendorBin2wav(srcRoot, destRoot) {
+  const makewavHeader = `/*
+ * Vendored from svofski/bin2wav (makewav.js). See emulator-src/vendor.lock.json
+ * for the pinned commit; refresh via \`npm run vendor:emulator\`.
+ * Adapted from CommonJS to ESM (module.exports -> export). Do not edit by hand.
+ */
+`;
+  const tapeHeader = `/*
+ * Vendored from svofski/bin2wav (tape.js). See emulator-src/vendor.lock.json
+ * for the pinned commit; refresh via \`npm run vendor:emulator\`.
+ * Adapted from CommonJS to ESM (require/module.exports -> import/export). Do not edit by hand.
+ */
+`;
+
+  let makewav = fs.readFileSync(path.join(srcRoot, "makewav.js"), "utf8");
+  makewav = replaceOnce(
+    makewav,
+    "module.exports = {\n    Wav: function(opt_params) {\n        return new Wav(opt_params);\n    }\n};",
+    "function WavFactory(opt_params) {\n    return new Wav(opt_params);\n}\n\nexport { WavFactory as Wav };",
+    "makewav.js",
+  );
+  fs.mkdirSync(destRoot, { recursive: true });
+  fs.writeFileSync(path.join(destRoot, "makewav.js"), makewavHeader + makewav);
+
+  let tape = fs.readFileSync(path.join(srcRoot, "tape.js"), "utf8");
+  tape = replaceOnce(
+    tape,
+    "var wavmodule = require('./makewav');",
+    'import * as wavmodule from "./makewav.js";',
+    "tape.js",
+  );
+  // ESM is always strict mode; upstream's prototype.makewav writes an implicit
+  // global `wav` (sloppy-mode only). Declare it so the v06c-rom path works.
+  tape = replaceOnce(
+    tape,
+    "\n    wav = wavmodule.Wav(params);",
+    "\n    var wav = wavmodule.Wav(params);",
+    "tape.js",
+  );
+  tape = replaceOnce(
+    tape,
+    "module.exports = {\n    TapeFormat: function(fmt, forfile, konst, leader, sampleRate) {\n        return new TapeFormat(fmt, forfile, konst, leader, sampleRate);\n    }\n};",
+    "function TapeFormatFactory(fmt, forfile, konst, leader, sampleRate) {\n    return new TapeFormat(fmt, forfile, konst, leader, sampleRate);\n}\n\nexport { TapeFormatFactory as TapeFormat };",
+    "tape.js",
+  );
+  fs.writeFileSync(path.join(destRoot, "tape.js"), tapeHeader + tape);
+}
+
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const lock = readLock();
@@ -155,9 +215,14 @@ function main() {
     results["zip.js"] = zip.sha;
     if (!args.check) vendorZipJs(zip.dir, destDir);
 
+    const bin2wav = shallowClone(lock["bin2wav"].repo, lock["bin2wav"].ref, tmp);
+    results["bin2wav"] = bin2wav.sha;
+    if (!args.check) vendorBin2wav(bin2wav.dir, BIN2WAV_DEST);
+
     lock.vector06js.ref = results.vector06js;
     lock["i8080-js"].ref = results["i8080-js"];
     lock["zip.js"].ref = results["zip.js"];
+    lock["bin2wav"].ref = results["bin2wav"];
 
     if (args.check) {
       const current = readLock();

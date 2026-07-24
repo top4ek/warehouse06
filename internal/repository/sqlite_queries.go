@@ -71,6 +71,67 @@ func (r *SQLiteRepository) SearchEntries(ctx context.Context, query string, limi
 	return entries, nil
 }
 
+// sha256LikePattern builds the LIKE pattern for a (partial) digest substring
+// match. Callers pass a validated hex fragment, so it never contains the LIKE
+// wildcards % or _ that would need escaping.
+func sha256LikePattern(fragment string) string {
+	return "%" + fragment + "%"
+}
+
+// CountEntriesBySHA256 counts entries owning a file whose SHA-256 digest contains
+// the given (partial) hex fragment.
+func (r *SQLiteRepository) CountEntriesBySHA256(ctx context.Context, sha256 string) (int, error) {
+	sqlQuery := `
+		SELECT COUNT(DISTINCT e.id)
+		FROM entries e
+		JOIN files f ON f.entry_id = e.id
+		WHERE f.sha256 LIKE ?
+	`
+	var total int
+	if err := r.db.QueryRowContext(ctx, sqlQuery, sha256LikePattern(sha256)).Scan(&total); err != nil {
+		return 0, fmt.Errorf("count sha256 search failed: %w", err)
+	}
+	return total, nil
+}
+
+// SearchEntriesBySHA256 returns entries owning a file whose SHA-256 digest
+// contains the given hex fragment. A full digest is a precise identifier and a
+// partial one narrows it down, so this is a substring match rather than the
+// FTS matching used for text queries.
+func (r *SQLiteRepository) SearchEntriesBySHA256(ctx context.Context, sha256 string, limit, offset int) ([]*domain.Entry, error) {
+	sqlQuery := `
+		SELECT DISTINCT e.id, e.path, e.name, e.description, e.date, e.type, e.youtube, e.created_at
+		FROM entries e
+		JOIN files f ON f.entry_id = e.id
+		WHERE f.sha256 LIKE ?
+		ORDER BY COALESCE(NULLIF(e.name, ''), e.path) ASC
+		LIMIT ? OFFSET ?
+	`
+
+	entries := make([]*domain.Entry, 0)
+	err := r.forEachRow(ctx, sqlQuery, []any{sha256LikePattern(sha256), limit, offset}, func(rows *sql.Rows) error {
+		e, err := scanEntrySummary(rows)
+		if err != nil {
+			return err
+		}
+		entries = append(entries, e)
+		return nil
+	})
+	if err != nil {
+		return nil, fmt.Errorf("sha256 search query failed: %w", err)
+	}
+
+	for _, e := range entries {
+		enrichEntry(e)
+	}
+	if err := r.populateEntriesListRelations(ctx, entries); err != nil {
+		return nil, err
+	}
+	decorateListEntries(entries)
+
+	return entries, nil
+}
+
 func (r *SQLiteRepository) buildEntriesQuery(opts EntryListOptions, countOnly bool) (string, []interface{}) {
 	var joins []string
 	var where []string
@@ -266,11 +327,11 @@ func (r *SQLiteRepository) populateEntryRelations(ctx context.Context, e *domain
 	}
 
 	err = r.forEachRow(ctx, `
-		SELECT id, filename, filepath, is_image
+		SELECT id, filename, filepath, is_image, size, sha256
 		FROM files
 		WHERE entry_id = ?`, []any{e.ID}, func(rows *sql.Rows) error {
 		var f domain.File
-		if err := rows.Scan(&f.ID, &f.Filename, &f.Filepath, &f.IsImage); err != nil {
+		if err := rows.Scan(&f.ID, &f.Filename, &f.Filepath, &f.IsImage, &f.Size, &f.SHA256); err != nil {
 			return err
 		}
 		e.Files = append(e.Files, f)

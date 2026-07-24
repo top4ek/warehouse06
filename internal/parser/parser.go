@@ -2,6 +2,8 @@ package parser
 
 import (
 	"bytes"
+	"crypto/sha256"
+	"encoding/hex"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -278,17 +280,23 @@ func (p *Parser) ScanDirectory() ([]*domain.Entry, []*domain.Author, error) {
 			for _, a := range fm.Authors {
 				entry.Authors = append(entry.Authors, domain.Author{DirectoryName: a})
 			}
+			dir := filepath.Dir(path)
 			for _, s := range fm.Screenshots {
+				size, sha, hashErr := fileSizeAndSHA256(filepath.Join(dir, s))
+				if hashErr != nil {
+					p.log.Warn("hash screenshot", zap.String("file", s), zap.Error(hashErr))
+				}
 				entry.Screenshots = append(entry.Screenshots, domain.File{
 					Filename: s,
 					Filepath: filepath.Join(entry.Path, s),
 					IsImage:  true,
+					Size:     size,
+					SHA256:   sha,
 				})
 			}
 			entry.Requires = fm.Require
 
 			// Find other files in the same directory
-			dir := filepath.Dir(path)
 			entriesInDir, readErr := os.ReadDir(dir)
 			if readErr != nil {
 				p.log.Warn("read entry directory", zap.String("dir", dir), zap.Error(readErr))
@@ -313,10 +321,16 @@ func (p *Parser) ScanDirectory() ([]*domain.Entry, []*domain.Author, error) {
 				}
 
 				if !isScreenshot {
+					size, sha, hashErr := fileSizeAndSHA256(filepath.Join(dir, e.Name()))
+					if hashErr != nil {
+						p.log.Warn("hash file", zap.String("file", e.Name()), zap.Error(hashErr))
+					}
 					entry.Files = append(entry.Files, domain.File{
 						Filename: e.Name(),
 						Filepath: filepath.Join(entry.Path, e.Name()),
 						IsImage:  isImage,
+						Size:     size,
+						SHA256:   sha,
 					})
 				}
 			}
@@ -328,6 +342,24 @@ func (p *Parser) ScanDirectory() ([]*domain.Entry, []*domain.Author, error) {
 	})
 
 	return entries, authors, err
+}
+
+// fileSizeAndSHA256 streams the file at path through a SHA-256 hasher, returning
+// its size in bytes and the lowercase hex digest. It does not load the whole
+// file into memory, so it is safe for large ROMs.
+func fileSizeAndSHA256(path string) (int64, string, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return 0, "", err
+	}
+	defer f.Close()
+
+	h := sha256.New()
+	size, err := io.Copy(h, f)
+	if err != nil {
+		return 0, "", err
+	}
+	return size, hex.EncodeToString(h.Sum(nil)), nil
 }
 
 func readFileLimited(path string, maxBytes int64) ([]byte, error) {

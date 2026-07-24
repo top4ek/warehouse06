@@ -10,5 +10,9 @@
   "zip.js": {
     "repo": "https://github.com/gildas-lormeau/zip.js.git",
     "ref": "563fe1da2579e55ae0ab1fed38a3b37a234e239e"
+  },
+  "bin2wav": {
+    "repo": "https://github.com/svofski/bin2wav.git",
+    "ref": "0aa16c6caa8073b8a2aa590555b0582329a9b583"
   }
 }

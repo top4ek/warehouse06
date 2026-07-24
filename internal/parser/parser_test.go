@@ -8,6 +8,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"go.uber.org/zap"
+
+	"warehouse06/internal/domain"
 )
 
 func TestParser_extractFrontmatter(t *testing.T) {
@@ -111,7 +113,21 @@ func TestParser_ScanDirectory(t *testing.T) {
 	require.Len(t, entries[0].Tags, 1)
 	assert.Equal(t, "game", entries[0].Tags[0].Name)
 	assert.Equal(t, "alice", authors[0].DirectoryName)
-	assert.NotEmpty(t, entries[0].Files)
+	require.NotEmpty(t, entries[0].Files)
+
+	var extra *domain.File
+	for i := range entries[0].Files {
+		if entries[0].Files[i].Filename == "extra.bin" {
+			extra = &entries[0].Files[i]
+		}
+	}
+	require.NotNil(t, extra)
+	assert.Equal(t, int64(len("bin")), extra.Size)
+	assert.Len(t, extra.SHA256, 64)
+
+	require.NotEmpty(t, entries[0].Screenshots)
+	assert.Equal(t, int64(len("png")), entries[0].Screenshots[0].Size)
+	assert.Len(t, entries[0].Screenshots[0].SHA256, 64)
 }
 
 func TestParser_rewriteResourcePaths(t *testing.T) {
