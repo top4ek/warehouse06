@@ -176,6 +176,7 @@ CI (`.github/workflows/ci.yml`): `make ci` in Docker; on `main` — Docker image
 
 ## Third-party licenses
 
-- **vector06js** — BSD-style, Viacheslav Slavinsky ([README](frontend/emulator-src/README.md))
-- **i8080-js** — Alexander Demin
-- **zip.js** — Gildas Lormeau
+- **vector06js** — BSD-style, Viacheslav Slavinsky ([svofski/vector06js](https://github.com/svofski/vector06js), [README](frontend/emulator-src/README.md))
+- **i8080-js** — Alexander Demin ([begoon/i8080-js](https://github.com/begoon/i8080-js))
+- **zip.js** — Gildas Lormeau ([gildas-lormeau/zip.js](https://github.com/gildas-lormeau/zip.js))
+- **bin2wav** — Viacheslav Slavinsky ([svofski/bin2wav](https://github.com/svofski/bin2wav))
