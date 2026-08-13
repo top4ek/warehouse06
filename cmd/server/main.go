@@ -5,6 +5,7 @@ import (
 	"net/http"
 	"os"
 	"os/signal"
+	"path/filepath"
 	"strconv"
 	"syscall"
 	"time"
@@ -52,6 +53,12 @@ func main() {
 		}
 	}()
 
+	// The REBUS and SQLite exports are disposable derived artifacts rebuilt
+	// from scratch every sync (like the :memory:-DSN-by-default catalog
+	// itself), so fixed temp-dir paths need no dedicated config/env var.
+	rebusExportPath := filepath.Join(os.TempDir(), "warehouse06-rebus-export.zip")
+	sqliteExportPath := filepath.Join(os.TempDir(), "warehouse06-sqlite-export.zip")
+
 	p := parser.NewParser(cfg.StorageDir, log)
 	syncStatus := sync.NewStatus()
 	syncer := sync.NewSyncer(
@@ -62,6 +69,8 @@ func main() {
 		holder,
 		p,
 		syncStatus,
+		rebusExportPath,
+		sqliteExportPath,
 		log,
 	)
 
@@ -90,7 +99,7 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	h := delivery.NewHandler(holder, syncStatus, log)
+	h := delivery.NewHandler(holder, syncStatus, rebusExportPath, sqliteExportPath, log)
 	h.RegisterRoutes(r)
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {

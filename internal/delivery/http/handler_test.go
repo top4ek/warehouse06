@@ -28,7 +28,7 @@ func newTestHandler(t *testing.T) (*Handler, *repository.Holder, *sync.Status) {
 	t.Cleanup(func() { _ = repo.Close() })
 	holder := repository.NewHolder(repo, ":memory:")
 	status := sync.NewStatus()
-	return NewHandler(holder, status, zap.NewNop()), holder, status
+	return NewHandler(holder, status, "", "", zap.NewNop()), holder, status
 }
 
 func serve(t *testing.T, h *Handler, method, target string) *httptest.ResponseRecorder {

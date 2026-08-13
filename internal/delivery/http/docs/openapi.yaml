@@ -17,6 +17,8 @@ tags:
     description: Entry authors
   - name: taxonomy
     description: Tags and platforms used to classify entries
+  - name: export
+    description: Bulk exports of the catalog in third-party formats
 
 paths:
   /api/status:
@@ -194,6 +196,54 @@ paths:
         "500":
           $ref: "#/components/responses/InternalError"
 
+  /api/export/rebus:
+    get:
+      tags: [export]
+      summary: Export catalog as REBUS-compatible dBASE II files
+      description: >
+        Returns a ZIP archive of dBASE II-compatible .DBF files
+        (KOI8-R encoded) covering the full catalog, for the "РЕБУС" DBMS
+        historically run on Robotron PC-1715 hardware. The archive is
+        rebuilt once per catalog sync, not per request, and this endpoint
+        only serves that pre-built static file. Table schemas are fitted to
+        the data being exported: column widths match the longest value
+        present, and a text column no record fills is left out of the table
+        entirely, so the schema varies between exports.
+      operationId: exportRebus
+      responses:
+        "200":
+          description: ZIP archive of the REBUS-compatible catalog export.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
+  /api/export/sqlite:
+    get:
+      tags: [export]
+      summary: Export catalog as a SQLite database
+      description: >
+        Returns a ZIP archive containing warehouse06.sqlite, a standalone
+        SQLite 3 copy of the full catalog (entries, authors, tags, files and
+        their relations). The FTS5 search index is dropped from the copy so
+        the file opens in SQLite builds compiled without FTS5. The snapshot
+        is taken once per catalog sync, not per request, and this endpoint
+        only serves that pre-built static file.
+      operationId: exportSQLite
+      responses:
+        "200":
+          description: ZIP archive containing the SQLite catalog snapshot.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
 components:
   parameters:
     LimitParam:
@@ -269,6 +319,12 @@ components:
             $ref: "#/components/schemas/Error"
     InternalError:
       description: An unexpected server error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
+    ServiceUnavailable:
+      description: The resource has not been generated yet (e.g. before the first successful sync).
       content:
         application/json:
           schema:

@@ -46,42 +46,43 @@ function SectionBody({ query, children }: { query: SectionQuery; children: React
   return <>{children}</>;
 }
 
-function SyncMetaLine() {
+function SyncMetaLine({ tail }: { tail: React.ReactNode }) {
   const { data: status } = useSyncStatus();
-  if (!status) return null;
 
-  if (status.syncing) {
-    return (
-      <Typography.Text type="secondary" style={{ fontSize: 13 }}>
-        Syncing archive…
-      </Typography.Text>
+  let syncPart: React.ReactNode = null;
+  if (status?.syncing) {
+    syncPart = "Syncing archive…";
+  } else if (status?.last_synced_at) {
+    const syncedLabel = dateTimeFmt.format(new Date(status.last_synced_at));
+    const commit = status.storage_commit;
+    syncPart = (
+      <>
+        Archive synced {syncedLabel}
+        {commit ? (
+          <>
+            {" "}
+            · storage at{" "}
+            <Typography.Text code title={commit.hash}>
+              {shortHash(commit.hash)}
+            </Typography.Text>{" "}
+            ({dateTimeFmt.format(new Date(commit.committed_at))})
+            {commit.subject ? (
+              <>
+                {" "}
+                — <Typography.Text italic>{commit.subject}</Typography.Text>
+              </>
+            ) : null}
+          </>
+        ) : null}
+      </>
     );
   }
 
-  if (!status.last_synced_at) return null;
-
-  const syncedLabel = dateTimeFmt.format(new Date(status.last_synced_at));
-  const commit = status.storage_commit;
-
   return (
     <Typography.Text type="secondary" style={{ fontSize: 13 }}>
-      Archive synced {syncedLabel}
-      {commit ? (
-        <>
-          {" "}
-          · storage at{" "}
-          <Typography.Text code title={commit.hash}>
-            {shortHash(commit.hash)}
-          </Typography.Text>{" "}
-          ({dateTimeFmt.format(new Date(commit.committed_at))})
-          {commit.subject ? (
-            <>
-              {" "}
-              — <Typography.Text italic>{commit.subject}</Typography.Text>
-            </>
-          ) : null}
-        </>
-      ) : null}
+      {syncPart}
+      {syncPart && tail ? " · " : null}
+      {tail}
     </Typography.Text>
   );
 }
@@ -185,7 +186,20 @@ export default function Home() {
         <SectionBody query={entriesQuery}>
           <EntryList entries={entries} viewMode={viewMode} onEntryClick={handleEntryClick} />
         </SectionBody>
-        <SyncMetaLine />
+        <SyncMetaLine
+          tail={
+            <>
+              Download catalog:{" "}
+              <a href="/api/export/sqlite" download>
+                SQLite
+              </a>{" "}
+              ·{" "}
+              <a href="/api/export/rebus" download>
+                REBUS (dBASE II)
+              </a>
+            </>
+          }
+        />
       </div>
     </Flex>
   );

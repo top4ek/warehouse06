@@ -3,7 +3,7 @@ FROM node:24-bookworm
 # Chromium + system deps for Playwright, baked into the image so e2e runs
 # offline. The playwright version must match @playwright/test in
 # frontend/package.json.
-ARG PLAYWRIGHT_VERSION=1.61.1
+ARG PLAYWRIGHT_VERSION=1.62.1
 ENV PLAYWRIGHT_BROWSERS_PATH=/ms-playwright
 
 RUN npx -y playwright@${PLAYWRIGHT_VERSION} install --with-deps chromium && \

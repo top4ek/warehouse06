@@ -6,6 +6,7 @@ import (
 	"errors"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 
@@ -25,19 +26,23 @@ var authorDirPattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
 var sha256Pattern = regexp.MustCompile(`^[0-9a-fA-F]{8,64}$`)
 
 type Handler struct {
-	log        *zap.Logger
-	holder     *repository.Holder
-	syncStatus *sync.Status
+	log              *zap.Logger
+	holder           *repository.Holder
+	syncStatus       *sync.Status
+	rebusExportPath  string
+	sqliteExportPath string
 }
 
-func NewHandler(holder *repository.Holder, syncStatus *sync.Status, log *zap.Logger) *Handler {
+func NewHandler(holder *repository.Holder, syncStatus *sync.Status, rebusExportPath, sqliteExportPath string, log *zap.Logger) *Handler {
 	if log == nil {
 		log = zap.NewNop()
 	}
 	return &Handler{
-		log:        log,
-		holder:     holder,
-		syncStatus: syncStatus,
+		log:              log,
+		holder:           holder,
+		syncStatus:       syncStatus,
+		rebusExportPath:  rebusExportPath,
+		sqliteExportPath: sqliteExportPath,
 	}
 }
 
@@ -51,12 +56,54 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 		r.Get("/authors/{dir}", h.handleGetAuthor)
 		r.Get("/tags", h.handleListTags)
 		r.Get("/platforms", h.handleListPlatforms)
+		r.Get("/export/rebus", h.handleExportREBUS)
+		r.Get("/export/sqlite", h.handleExportSQLite)
 
 		r.Get("/openapi.yaml", h.handleGetOpenAPISpec)
 		r.Get("/docs", h.handleGetDocsIndex)
 		r.Get("/docs/init.js", h.handleGetDocsInitJS)
 		r.Get("/docs/assets/*", h.handleGetDocsAssets)
 	})
+}
+
+// handleExportREBUS serves the REBUS-compatible catalog export as a static
+// file. It deliberately does no generation work itself: building the export
+// on every request would let a client trigger unbounded repeated work
+// (Content-Disposition download, zipping, KOI8-R transcoding) for free. The
+// export is instead rebuilt once per catalog rebuild by the sync pipeline
+// (see internal/sync.Syncer.rebuildRebusExport) and this handler only reads
+// the resulting file from disk.
+func (h *Handler) handleExportREBUS(w http.ResponseWriter, r *http.Request) {
+	if h.rebusExportPath == "" {
+		writeJSONError(w, http.StatusServiceUnavailable, "REBUS export not yet available")
+		return
+	}
+	if _, err := os.Stat(h.rebusExportPath); err != nil {
+		writeJSONError(w, http.StatusServiceUnavailable, "REBUS export not yet available")
+		return
+	}
+	w.Header().Set("Content-Disposition", `attachment; filename="warehouse06-rebus-export.zip"`)
+	http.ServeFile(w, r, h.rebusExportPath)
+}
+
+// handleExportSQLite serves the zipped SQLite catalog snapshot as a static
+// file, for the same reason handleExportREBUS does: copying the database per
+// request would be O(database size) of work a client could trigger at will,
+// and in the default :memory: mode the pool holds a single connection, so
+// concurrent dumps would stall every other API handler. The snapshot is taken
+// once per catalog rebuild by the sync pipeline (see
+// internal/sync.Syncer.rebuildSQLiteExport).
+func (h *Handler) handleExportSQLite(w http.ResponseWriter, r *http.Request) {
+	if h.sqliteExportPath == "" {
+		writeJSONError(w, http.StatusServiceUnavailable, "SQLite export not yet available")
+		return
+	}
+	if _, err := os.Stat(h.sqliteExportPath); err != nil {
+		writeJSONError(w, http.StatusServiceUnavailable, "SQLite export not yet available")
+		return
+	}
+	w.Header().Set("Content-Disposition", `attachment; filename="warehouse06-sqlite-export.zip"`)
+	http.ServeFile(w, r, h.sqliteExportPath)
 }
 
 func (h *Handler) handleGetStatus(w http.ResponseWriter, r *http.Request) {
