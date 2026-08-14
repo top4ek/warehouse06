@@ -26,23 +26,26 @@ var authorDirPattern = regexp.MustCompile(`^[a-zA-Z0-9._-]+$`)
 var sha256Pattern = regexp.MustCompile(`^[0-9a-fA-F]{8,64}$`)
 
 type Handler struct {
-	log              *zap.Logger
-	holder           *repository.Holder
-	syncStatus       *sync.Status
-	rebusExportPath  string
-	sqliteExportPath string
+	log        *zap.Logger
+	holder     *repository.Holder
+	syncStatus *sync.Status
+	exports    sync.ExportPaths
+	// storageURL is the public URL of the content repository, already
+	// sanitized by config.Config.PublicStorageURL, or empty when none is
+	// configured.
+	storageURL string
 }
 
-func NewHandler(holder *repository.Holder, syncStatus *sync.Status, rebusExportPath, sqliteExportPath string, log *zap.Logger) *Handler {
+func NewHandler(holder *repository.Holder, syncStatus *sync.Status, exports sync.ExportPaths, storageURL string, log *zap.Logger) *Handler {
 	if log == nil {
 		log = zap.NewNop()
 	}
 	return &Handler{
-		log:              log,
-		holder:           holder,
-		syncStatus:       syncStatus,
-		rebusExportPath:  rebusExportPath,
-		sqliteExportPath: sqliteExportPath,
+		log:        log,
+		holder:     holder,
+		syncStatus: syncStatus,
+		exports:    exports,
+		storageURL: storageURL,
 	}
 }
 
@@ -58,6 +61,7 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 		r.Get("/platforms", h.handleListPlatforms)
 		r.Get("/export/rebus", h.handleExportREBUS)
 		r.Get("/export/sqlite", h.handleExportSQLite)
+		r.Get("/export/storage", h.handleExportStorage)
 
 		r.Get("/openapi.yaml", h.handleGetOpenAPISpec)
 		r.Get("/docs", h.handleGetDocsIndex)
@@ -74,16 +78,16 @@ func (h *Handler) RegisterRoutes(r chi.Router) {
 // (see internal/sync.Syncer.rebuildRebusExport) and this handler only reads
 // the resulting file from disk.
 func (h *Handler) handleExportREBUS(w http.ResponseWriter, r *http.Request) {
-	if h.rebusExportPath == "" {
+	if h.exports.Rebus == "" {
 		writeJSONError(w, http.StatusServiceUnavailable, "REBUS export not yet available")
 		return
 	}
-	if _, err := os.Stat(h.rebusExportPath); err != nil {
+	if _, err := os.Stat(h.exports.Rebus); err != nil {
 		writeJSONError(w, http.StatusServiceUnavailable, "REBUS export not yet available")
 		return
 	}
 	w.Header().Set("Content-Disposition", `attachment; filename="warehouse06-rebus-export.zip"`)
-	http.ServeFile(w, r, h.rebusExportPath)
+	http.ServeFile(w, r, h.exports.Rebus)
 }
 
 // handleExportSQLite serves the zipped SQLite catalog snapshot as a static
@@ -94,21 +98,41 @@ func (h *Handler) handleExportREBUS(w http.ResponseWriter, r *http.Request) {
 // once per catalog rebuild by the sync pipeline (see
 // internal/sync.Syncer.rebuildSQLiteExport).
 func (h *Handler) handleExportSQLite(w http.ResponseWriter, r *http.Request) {
-	if h.sqliteExportPath == "" {
+	if h.exports.SQLite == "" {
 		writeJSONError(w, http.StatusServiceUnavailable, "SQLite export not yet available")
 		return
 	}
-	if _, err := os.Stat(h.sqliteExportPath); err != nil {
+	if _, err := os.Stat(h.exports.SQLite); err != nil {
 		writeJSONError(w, http.StatusServiceUnavailable, "SQLite export not yet available")
 		return
 	}
 	w.Header().Set("Content-Disposition", `attachment; filename="warehouse06-sqlite-export.zip"`)
-	http.ServeFile(w, r, h.sqliteExportPath)
+	http.ServeFile(w, r, h.exports.SQLite)
+}
+
+// handleExportStorage serves the zipped content repository, for the same
+// reason the two handlers above serve pre-built files: zipping a tree of this
+// size per request is work a client could trigger at will. The archive is
+// rebuilt once per catalog sync (see internal/sync.Syncer.rebuildStorageExport)
+// and http.ServeFile adds range support, which matters for an archive this
+// large.
+func (h *Handler) handleExportStorage(w http.ResponseWriter, r *http.Request) {
+	if h.exports.Storage == "" {
+		writeJSONError(w, http.StatusServiceUnavailable, "storage export not yet available")
+		return
+	}
+	if _, err := os.Stat(h.exports.Storage); err != nil {
+		writeJSONError(w, http.StatusServiceUnavailable, "storage export not yet available")
+		return
+	}
+	w.Header().Set("Content-Disposition", `attachment; filename="warehouse06-storage-export.zip"`)
+	http.ServeFile(w, r, h.exports.Storage)
 }
 
 func (h *Handler) handleGetStatus(w http.ResponseWriter, r *http.Request) {
 	resp := domain.SyncStatus{
-		Syncing: h.syncStatus.Syncing(),
+		Syncing:    h.syncStatus.Syncing(),
+		StorageURL: h.storageURL,
 	}
 
 	if t := h.syncStatus.LastSyncedAt(); !t.IsZero() {

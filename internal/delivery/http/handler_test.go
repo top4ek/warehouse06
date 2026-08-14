@@ -28,7 +28,7 @@ func newTestHandler(t *testing.T) (*Handler, *repository.Holder, *sync.Status) {
 	t.Cleanup(func() { _ = repo.Close() })
 	holder := repository.NewHolder(repo, ":memory:")
 	status := sync.NewStatus()
-	return NewHandler(holder, status, "", "", zap.NewNop()), holder, status
+	return NewHandler(holder, status, sync.ExportPaths{}, "", zap.NewNop()), holder, status
 }
 
 func serve(t *testing.T, h *Handler, method, target string) *httptest.ResponseRecorder {
@@ -61,6 +61,23 @@ func TestHandler_GetStatus(t *testing.T) {
 	require.NotNil(t, resp.StorageCommit)
 	assert.Equal(t, "abc123def456", resp.StorageCommit.Hash)
 	assert.Equal(t, "Update archive", resp.StorageCommit.Subject)
+	assert.Empty(t, resp.StorageURL, "no storage URL configured means no link for the client to render")
+}
+
+func TestHandler_GetStatus_storageURL(t *testing.T) {
+	repo, err := repository.NewSQLiteRepository(":memory:", zap.NewNop())
+	require.NoError(t, err)
+	t.Cleanup(func() { _ = repo.Close() })
+	holder := repository.NewHolder(repo, ":memory:")
+	status := sync.NewStatus()
+
+	h := NewHandler(holder, status, sync.ExportPaths{}, "https://github.com/top4ek/retro_files", zap.NewNop())
+	w := serve(t, h, http.MethodGet, "/api/status")
+	require.Equal(t, http.StatusOK, w.Code)
+
+	var resp domain.SyncStatus
+	require.NoError(t, json.NewDecoder(w.Body).Decode(&resp))
+	assert.Equal(t, "https://github.com/top4ek/retro_files", resp.StorageURL)
 }
 
 func TestHandler_GetStatus_Syncing(t *testing.T) {

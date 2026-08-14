@@ -19,20 +19,28 @@ import (
 	"warehouse06/internal/storage"
 )
 
+// ExportPaths holds the destinations of the derived export artifacts. An empty
+// path disables that export: the syncer skips its rebuild and the HTTP handler
+// reports the export as unavailable.
+type ExportPaths struct {
+	Rebus   string
+	SQLite  string
+	Storage string
+}
+
 type Syncer struct {
-	log              *zap.Logger
-	holder           *repository.Holder
-	primaryDSN       string
-	parser           *parser.Parser
-	storageDir       string
-	storageURL       string
-	interval         time.Duration
-	status           *Status
-	rebusExportPath  string
-	sqliteExportPath string
-	mu               sync.Mutex
-	running          bool
-	wg               sync.WaitGroup
+	log        *zap.Logger
+	holder     *repository.Holder
+	primaryDSN string
+	parser     *parser.Parser
+	storageDir string
+	storageURL string
+	interval   time.Duration
+	status     *Status
+	exports    ExportPaths
+	mu         sync.Mutex
+	running    bool
+	wg         sync.WaitGroup
 }
 
 func NewSyncer(
@@ -41,21 +49,19 @@ func NewSyncer(
 	holder *repository.Holder,
 	parser *parser.Parser,
 	status *Status,
-	rebusExportPath string,
-	sqliteExportPath string,
+	exports ExportPaths,
 	log *zap.Logger,
 ) *Syncer {
 	return &Syncer{
-		log:              log,
-		holder:           holder,
-		primaryDSN:       primaryDSN,
-		parser:           parser,
-		storageDir:       storageDir,
-		storageURL:       storageURL,
-		interval:         interval,
-		status:           status,
-		rebusExportPath:  rebusExportPath,
-		sqliteExportPath: sqliteExportPath,
+		log:        log,
+		holder:     holder,
+		primaryDSN: primaryDSN,
+		parser:     parser,
+		storageDir: storageDir,
+		storageURL: storageURL,
+		interval:   interval,
+		status:     status,
+		exports:    exports,
 	}
 }
 
@@ -117,6 +123,21 @@ func (s *Syncer) Sync(ctx context.Context) error {
 		}
 	}
 
+	// The storage archive reads only the working tree, so it runs alongside the
+	// parse and the database rebuild instead of after them. Waiting for it is
+	// deferred right here: the goroutine must not outlive Sync() on any early
+	// error return, or it would still be reading storage/ when the next sync
+	// pulls into it.
+	var storageExportWG sync.WaitGroup
+	storageExportWG.Add(1)
+	go func() {
+		defer storageExportWG.Done()
+		if err := s.rebuildStorageExport(ctx); err != nil {
+			s.log.Error("storage export rebuild failed", zap.Error(err))
+		}
+	}()
+	defer storageExportWG.Wait()
+
 	s.log.Info("scanning directory", zap.String("dir", s.storageDir))
 	entries, authors, err := s.parser.ScanDirectory()
 	if err != nil {
@@ -160,13 +181,27 @@ func (s *Syncer) Sync(ctx context.Context) error {
 		return fmt.Errorf("save staging database: %w", err)
 	}
 
-	if err := s.rebuildSQLiteExport(ctx, stagingRepo); err != nil {
-		// Same policy as the REBUS export below: a derived artifact must
-		// never fail the catalog rebuild. Done here rather than after the
-		// swap because the staging database serves no traffic yet, so
-		// copying it cannot contend with API handlers.
-		s.log.Error("sqlite export rebuild failed", zap.Error(err))
-	}
+	// Both database exports read the staging repository, before the swap: it
+	// serves no traffic yet, so copying it cannot contend with API handlers.
+	// A derived artifact must never fail the catalog rebuild, so their errors
+	// are logged and dropped. Under the default :memory: DSN the pool holds a
+	// single connection, so the two goroutines take turns on it rather than
+	// running truly in parallel - that is correct, just not faster.
+	var dbExportWG sync.WaitGroup
+	dbExportWG.Add(2)
+	go func() {
+		defer dbExportWG.Done()
+		if err := s.rebuildSQLiteExport(ctx, stagingRepo); err != nil {
+			s.log.Error("sqlite export rebuild failed", zap.Error(err))
+		}
+	}()
+	go func() {
+		defer dbExportWG.Done()
+		if err := s.rebuildRebusExport(ctx, stagingRepo); err != nil {
+			s.log.Error("rebus export rebuild failed", zap.Error(err))
+		}
+	}()
+	dbExportWG.Wait()
 
 	oldRepo, oldDSN := s.holder.Swap(stagingRepo, stagingDSN)
 	if oldRepo != nil {
@@ -177,13 +212,9 @@ func (s *Syncer) Sync(ctx context.Context) error {
 		}()
 	}
 
-	if err := s.rebuildRebusExport(ctx); err != nil {
-		// The catalog rebuild itself succeeded; the REBUS export is a
-		// secondary derived artifact. Do not fail Sync() over it - the
-		// export endpoint gracefully serves the previous file (or a 503
-		// if none exists yet) when this fails.
-		s.log.Error("rebus export rebuild failed", zap.Error(err))
-	}
+	// Hold back the "synced" status until every artifact is on disk, so a
+	// successful sync never advertises exports that are still being written.
+	storageExportWG.Wait()
 
 	s.status.SetSuccess(time.Now(), head, hasHead)
 	s.log.Info("sync completed successfully")
@@ -191,18 +222,17 @@ func (s *Syncer) Sync(ctx context.Context) error {
 }
 
 // rebuildRebusExport regenerates the REBUS-compatible export from the
-// freshly-swapped active repository and atomically replaces the static file
+// freshly-built staging repository and atomically replaces the static file
 // the HTTP endpoint serves. Writing to a temp path and renaming over the
 // final path (rather than truncating it in place) guarantees a concurrent
 // reader never observes a partially-written file: POSIX rename is atomic,
 // and an already-open reader keeps referencing the old inode's complete
 // data.
-func (s *Syncer) rebuildRebusExport(ctx context.Context) error {
-	if s.rebusExportPath == "" {
+func (s *Syncer) rebuildRebusExport(ctx context.Context, repo *repository.SQLiteRepository) error {
+	if s.exports.Rebus == "" {
 		return nil
 	}
 
-	repo := s.holder.Get()
 	entries, err := repo.ListAllEntries(ctx)
 	if err != nil {
 		return fmt.Errorf("list entries for rebus export: %w", err)
@@ -224,16 +254,41 @@ func (s *Syncer) rebuildRebusExport(ctx context.Context) error {
 		s.log.Warn("rebus export warning", zap.String("detail", w))
 	}
 
-	tmpPath := s.rebusExportPath + ".tmp"
+	tmpPath := s.exports.Rebus + ".tmp"
 	if err := os.WriteFile(tmpPath, zipData, 0o644); err != nil {
 		return fmt.Errorf("write rebus export temp file: %w", err)
 	}
-	if err := os.Rename(tmpPath, s.rebusExportPath); err != nil {
+	if err := os.Rename(tmpPath, s.exports.Rebus); err != nil {
 		_ = os.Remove(tmpPath)
 		return fmt.Errorf("rename rebus export into place: %w", err)
 	}
 
-	s.log.Info("rebus export rebuilt", zap.String("path", s.rebusExportPath), zap.Int("size", len(zipData)))
+	s.log.Info("rebus export rebuilt", zap.String("path", s.exports.Rebus), zap.Int("size", len(zipData)))
+	return nil
+}
+
+// rebuildStorageExport zips the content repository's working tree and
+// atomically replaces the static file the HTTP endpoint serves (same rename
+// rationale as rebuildRebusExport). Only the files the catalog is built from
+// go in: storage.ArchiveDir skips the .git directory along with every other
+// dot-prefixed entry.
+func (s *Syncer) rebuildStorageExport(ctx context.Context) error {
+	if s.exports.Storage == "" {
+		return nil
+	}
+
+	tmpPath := s.exports.Storage + ".tmp"
+	size, err := storage.ArchiveDir(ctx, s.storageDir, tmpPath)
+	if err != nil {
+		_ = os.Remove(tmpPath)
+		return fmt.Errorf("archive storage dir: %w", err)
+	}
+	if err := os.Rename(tmpPath, s.exports.Storage); err != nil {
+		_ = os.Remove(tmpPath)
+		return fmt.Errorf("rename storage export into place: %w", err)
+	}
+
+	s.log.Info("storage export rebuilt", zap.String("path", s.exports.Storage), zap.Int64("size", size))
 	return nil
 }
 
@@ -247,11 +302,11 @@ const sqliteExportMemberName = "warehouse06.sqlite"
 // The snapshot is a copy taken with VACUUM INTO, so the catalog itself keeps
 // running unchanged from whichever DSN mode is configured - :memory: or file.
 func (s *Syncer) rebuildSQLiteExport(ctx context.Context, repo *repository.SQLiteRepository) error {
-	if s.sqliteExportPath == "" {
+	if s.exports.SQLite == "" {
 		return nil
 	}
 
-	snapshotPath := s.sqliteExportPath + ".db.tmp"
+	snapshotPath := s.exports.SQLite + ".db.tmp"
 	if err := repo.SnapshotTo(ctx, snapshotPath); err != nil {
 		return fmt.Errorf("snapshot database: %w", err)
 	}
@@ -267,16 +322,16 @@ func (s *Syncer) rebuildSQLiteExport(ctx context.Context, repo *repository.SQLit
 		return err
 	}
 
-	tmpPath := s.sqliteExportPath + ".tmp"
+	tmpPath := s.exports.SQLite + ".tmp"
 	if err := os.WriteFile(tmpPath, zipData, 0o644); err != nil {
 		return fmt.Errorf("write sqlite export temp file: %w", err)
 	}
-	if err := os.Rename(tmpPath, s.sqliteExportPath); err != nil {
+	if err := os.Rename(tmpPath, s.exports.SQLite); err != nil {
 		_ = os.Remove(tmpPath)
 		return fmt.Errorf("rename sqlite export into place: %w", err)
 	}
 
-	s.log.Info("sqlite export rebuilt", zap.String("path", s.sqliteExportPath), zap.Int("size", len(zipData)))
+	s.log.Info("sqlite export rebuilt", zap.String("path", s.exports.SQLite), zap.Int("size", len(zipData)))
 	return nil
 }
 

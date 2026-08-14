@@ -88,3 +88,29 @@ func TestSyncInterval(t *testing.T) {
 	assert.Equal(t, time.Duration(0), (&Config{Sync: Sync{IntervalHours: 0}}).SyncInterval())
 	assert.Equal(t, 6*time.Hour, (&Config{Sync: Sync{IntervalHours: 6}}).SyncInterval())
 }
+
+func TestPublicStorageURL(t *testing.T) {
+	tests := []struct {
+		name string
+		url  string
+		want string
+	}{
+		{"empty", "", ""},
+		{"https", "https://github.com/top4ek/retro_files", "https://github.com/top4ek/retro_files"},
+		{"git suffix stripped", "https://github.com/top4ek/retro_files.git", "https://github.com/top4ek/retro_files"},
+		{"trailing slash stripped", "https://github.com/top4ek/retro_files/", "https://github.com/top4ek/retro_files"},
+		{"http kept", "http://git.example.org/retro", "http://git.example.org/retro"},
+		{"credentials stripped", "https://user:token@github.com/top4ek/retro_files.git", "https://github.com/top4ek/retro_files"},
+		{"ssh remote", "git@github.com:top4ek/retro_files.git", ""},
+		{"ssh scheme", "ssh://git@github.com/top4ek/retro_files.git", ""},
+		{"local path", "/srv/git/storage", ""},
+		{"file url", "file:///srv/git/storage", ""},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			cfg := &Config{StorageURL: tt.url}
+			assert.Equal(t, tt.want, cfg.PublicStorageURL())
+		})
+	}
+}

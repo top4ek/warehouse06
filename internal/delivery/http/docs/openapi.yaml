@@ -244,6 +244,31 @@ paths:
         "503":
           $ref: "#/components/responses/ServiceUnavailable"
 
+  /api/export/storage:
+    get:
+      tags: [export]
+      summary: Export the content repository files
+      description: >
+        Returns a ZIP archive of the storage repository's working tree - every
+        catalog file (README.md documents, screenshots, ROMs, disk images and
+        other attachments) laid out exactly as in the repository. The git
+        history and all other dot-prefixed entries are excluded, so the archive
+        holds only the files the catalog is built from. It is rebuilt once per
+        catalog sync, not per request, and this endpoint only serves that
+        pre-built static file. The archive is considerably larger than the other
+        two exports; range requests are supported.
+      operationId: exportStorage
+      responses:
+        "200":
+          description: ZIP archive of the content repository files.
+          content:
+            application/zip:
+              schema:
+                type: string
+                format: binary
+        "503":
+          $ref: "#/components/responses/ServiceUnavailable"
+
 components:
   parameters:
     LimitParam:
@@ -501,3 +526,11 @@ components:
           nullable: true
         storage_commit:
           $ref: "#/components/schemas/StorageCommit"
+        storage_url:
+          type: string
+          format: uri
+          description: >
+            Public web URL of the content repository. Present only when a
+            storage repository URL is configured and it is an http(s) URL;
+            any credentials it carries are stripped.
+          example: "https://github.com/top4ek/retro_files"

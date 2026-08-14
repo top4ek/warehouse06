@@ -53,11 +53,16 @@ func main() {
 		}
 	}()
 
-	// The REBUS and SQLite exports are disposable derived artifacts rebuilt
-	// from scratch every sync (like the :memory:-DSN-by-default catalog
-	// itself), so fixed temp-dir paths need no dedicated config/env var.
-	rebusExportPath := filepath.Join(os.TempDir(), "warehouse06-rebus-export.zip")
-	sqliteExportPath := filepath.Join(os.TempDir(), "warehouse06-sqlite-export.zip")
+	// The exports are disposable derived artifacts rebuilt from scratch
+	// whenever the content changes (like the :memory:-DSN-by-default catalog
+	// itself), so fixed temp-dir paths need no dedicated config/env var. The
+	// storage archive is by far the largest of the three - it is the whole
+	// content repository minus its git history.
+	exportPaths := sync.ExportPaths{
+		Rebus:   filepath.Join(os.TempDir(), "warehouse06-rebus-export.zip"),
+		SQLite:  filepath.Join(os.TempDir(), "warehouse06-sqlite-export.zip"),
+		Storage: filepath.Join(os.TempDir(), "warehouse06-storage-export.zip"),
+	}
 
 	p := parser.NewParser(cfg.StorageDir, log)
 	syncStatus := sync.NewStatus()
@@ -69,8 +74,7 @@ func main() {
 		holder,
 		p,
 		syncStatus,
-		rebusExportPath,
-		sqliteExportPath,
+		exportPaths,
 		log,
 	)
 
@@ -99,7 +103,7 @@ func main() {
 		MaxAge:           300,
 	}))
 
-	h := delivery.NewHandler(holder, syncStatus, rebusExportPath, sqliteExportPath, log)
+	h := delivery.NewHandler(holder, syncStatus, exportPaths, cfg.PublicStorageURL(), log)
 	h.RegisterRoutes(r)
 
 	r.Get("/ping", func(w http.ResponseWriter, r *http.Request) {

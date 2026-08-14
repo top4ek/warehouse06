@@ -55,9 +55,20 @@ function SyncMetaLine({ tail }: { tail: React.ReactNode }) {
   } else if (status?.last_synced_at) {
     const syncedLabel = dateTimeFmt.format(new Date(status.last_synced_at));
     const commit = status.storage_commit;
+    const repoUrl = status.storage_url;
+    const subject = commit?.subject ? (
+      <Typography.Text italic>{commit.subject}</Typography.Text>
+    ) : null;
     syncPart = (
       <>
-        Archive synced {syncedLabel}
+        {repoUrl ? (
+          <a href={repoUrl} target="_blank" rel="noopener noreferrer">
+            Archive
+          </a>
+        ) : (
+          "Archive"
+        )}{" "}
+        synced {syncedLabel}
         {commit ? (
           <>
             {" "}
@@ -66,10 +77,10 @@ function SyncMetaLine({ tail }: { tail: React.ReactNode }) {
               {shortHash(commit.hash)}
             </Typography.Text>{" "}
             ({dateTimeFmt.format(new Date(commit.committed_at))})
-            {commit.subject ? (
+            {subject ? (
               <>
                 {" "}
-                — <Typography.Text italic>{commit.subject}</Typography.Text>
+                — {subject}
               </>
             ) : null}
           </>
@@ -196,6 +207,10 @@ export default function Home() {
               ·{" "}
               <a href="/api/export/rebus" download>
                 REBUS (dBASE II)
+              </a>{" "}
+              ·{" "}
+              <a href="/api/export/storage" download>
+                Files (ZIP)
               </a>
             </>
           }

@@ -3,6 +3,7 @@ package config
 import (
 	"fmt"
 	"log"
+	"net/url"
 	"os"
 	"path/filepath"
 	"strings"
@@ -39,6 +40,29 @@ func (c *Config) SyncInterval() time.Duration {
 		return 0
 	}
 	return time.Duration(c.IntervalHours) * time.Hour
+}
+
+// PublicStorageURL returns the content repository URL in a form safe to expose
+// over the API: only http(s) URLs qualify (an SSH remote is not browsable), and
+// any embedded credentials are stripped, since a clone URL may legitimately
+// carry a token. It returns an empty string when there is nothing to link to.
+func (c *Config) PublicStorageURL() string {
+	if c.StorageURL == "" {
+		return ""
+	}
+	u, err := url.Parse(c.StorageURL)
+	if err != nil {
+		return ""
+	}
+	if u.Scheme != "http" && u.Scheme != "https" {
+		return ""
+	}
+	if u.Host == "" {
+		return ""
+	}
+	u.User = nil
+	u.Path = strings.TrimSuffix(strings.TrimRight(u.Path, "/"), ".git")
+	return u.String()
 }
 
 func MustLoad() *Config {
