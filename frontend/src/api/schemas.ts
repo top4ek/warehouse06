@@ -92,6 +92,7 @@ export const syncStatusSchema = z.object({
   syncing: z.boolean(),
   last_synced_at: z.string().optional(),
   storage_commit: storageCommitSchema.optional(),
+  storage_url: z.string().url().optional(),
 });
 
 export type ControlsConfig = z.infer<typeof controlsSchema>;
