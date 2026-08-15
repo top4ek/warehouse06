@@ -28,8 +28,9 @@ const NAMED_KEYS: Record<string, { code: number; label: string; edge?: boolean }
 
 export const DEFAULT_CONTROLS: ControlsConfig = {
   rows: [
-    [null, "up", null, "f11", "f12"],
-    ["left", "down", "right", "ss", "space"],
+    ["f12", "f11", "rus", "ps", "tab"],
+    [null, "up", null, "ss", "us"],
+    ["left", "down", "right", "enter", "space"],
   ],
 };
 
