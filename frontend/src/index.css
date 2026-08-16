@@ -559,3 +559,47 @@ body {
   border-radius: 12px;
   border: 1px solid var(--ant-color-border);
 }
+
+.content-html table {
+  display: block;
+  width: max-content;
+  max-width: 100%;
+  overflow-x: auto;
+  border: 1px solid var(--ant-color-border);
+  border-radius: var(--ant-border-radius);
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.95em;
+}
+
+.content-html :where(th, td) {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--ant-color-border-secondary);
+}
+
+.content-html :where(th, td):not([align]) {
+  text-align: left;
+}
+
+.content-html :where(th, td):not(:last-child) {
+  border-right: 1px solid var(--ant-color-border-secondary);
+}
+
+.content-html thead th {
+  background: var(--ant-color-fill-tertiary);
+  color: var(--ant-color-text);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.content-html tbody tr:nth-child(even) {
+  background: var(--ant-color-fill-quaternary);
+}
+
+.content-html tbody tr:hover {
+  background: var(--ant-color-fill-tertiary);
+}
+
+.content-html tbody tr:last-child :where(th, td) {
+  border-bottom: none;
+}
