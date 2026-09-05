@@ -103,13 +103,21 @@ test("keeps the viewport anchored when the window is trimmed", async ({ page }) 
   });
   expect(anchored).not.toBeNull();
 
+  // The trim drops the first page; wait for it rather than for a fixed delay,
+  // which was too short on a cold dev server.
+  await expect(entryText(page, 1)).not.toBeAttached();
+
   // After the trim settles, the anchored entry should still be near the
-  // viewport (within one viewport height), not a full page away.
-  await page.waitForTimeout(300);
-  const offset = await page.evaluate((path) => {
-    const el = document.querySelector(`[data-entry-path="${path}"]`);
-    if (!el) return Number.POSITIVE_INFINITY;
-    return Math.abs(el.getBoundingClientRect().top);
-  }, anchored);
-  expect(offset).toBeLessThan(page.viewportSize()!.height * 1.5);
+  // viewport (within one viewport height), not a full page away. Polled, so
+  // the scroll compensation gets a frame to apply; a real page-sized jump
+  // never settles and still fails the bound.
+  await expect
+    .poll(() =>
+      page.evaluate((path) => {
+        const el = document.querySelector(`[data-entry-path="${path}"]`);
+        if (!el) return Number.POSITIVE_INFINITY;
+        return Math.abs(el.getBoundingClientRect().top);
+      }, anchored),
+    )
+    .toBeLessThan(page.viewportSize()!.height * 1.5);
 });

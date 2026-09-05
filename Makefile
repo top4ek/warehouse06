@@ -97,7 +97,7 @@ vendor-emulator-check: ensure-built ## Verify vendor.lock.json matches upstream
 
 # ── Go checks (plain commands; run inside the dev container or in CI) ────────
 
-GOLANGCI_LINT_VERSION := v2.12.2
+GOLANGCI_LINT_VERSION := v2.13.2
 
 .PHONY: fmt
 fmt: ## Check gofmt formatting
