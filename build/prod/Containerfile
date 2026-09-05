@@ -30,7 +30,8 @@ WORKDIR /app
 ARG GIT_COMMIT=unknown
 
 # git stays: the sync worker clones/pulls the storage repository at runtime.
-RUN apk add --no-cache tzdata ca-certificates git sqlite wget
+RUN apk upgrade --no-cache && \
+    apk add --no-cache tzdata ca-certificates git sqlite wget
 
 COPY --from=backend-builder /app/server .
 COPY --from=backend-builder /app/frontend/dist ./frontend/dist
