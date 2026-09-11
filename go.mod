@@ -12,7 +12,7 @@ require (
 	github.com/swaggo/files/v2 v2.0.2
 	github.com/yuin/goldmark v1.8.6
 	go.uber.org/zap v1.28.0
-	golang.org/x/text v0.41.0
+	golang.org/x/text v0.42.0
 	gopkg.in/yaml.v3 v3.0.1
 )
 
