@@ -12,7 +12,7 @@ Pinned versions are recorded in [`vendor.lock.json`](vendor.lock.json).
 | `src/` | vector06js | bundled |
 | `i8080-js/` | [svofski/i8080-js](https://github.com/svofski/i8080-js) | bundled |
 | `wav.js/` | vector06js | bundled |
-| `zip.js/WebContent/` | [gildas-lormeau/zip.js](https://github.com/gildas-lormeau/zip.js) | copied as-is (Web Workers) |
+| `zip.js/` | [gildas-lormeau/zip.js](https://github.com/gildas-lormeau/zip.js) | copied as-is (Web Workers) |
 | `*.png` | vector06js | copied as-is |
 | `index.html` | vector06js (adapted) | copied to `public/emulator/` |
 
@@ -27,4 +27,9 @@ npm run vendor:emulator -- --ref <sha>   # bump vector06js ref, then re-vendor a
 npm run build:emulator
 ```
 
-Commit changes under `emulator-src/` and `vendor.lock.json` only.
+Local integration changes are applied from `../scripts/emulator.patch`; bin2wav types
+are generated from `../scripts/bin2wav-tape.d.ts`. Update these adaptations when
+upstream changes. `npm run vendor:emulator -- --check` compares generated contents
+with the pinned sources and adaptations, including added or removed files.
+
+Commit vendored sources, lock and any adaptation changes together.

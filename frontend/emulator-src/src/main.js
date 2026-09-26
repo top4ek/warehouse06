@@ -32,7 +32,10 @@
 
     fullscreener = new FullScreener();
     
-    zip.workerScriptsPath = './zip.js/WebContent/';
+    zip.configure({
+        workerURI: new URL('./zip.js/zip-web-worker.js', location.href).href,
+        wasmURI: new URL('./zip.js/zip-module.wasm', location.href).href
+    });
     memory = new Memory();
     keyboard2 = new Keyboard();
     keyboard2.Hook();

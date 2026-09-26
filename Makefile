@@ -5,6 +5,7 @@ SERVER_BIN     := server
 CONFIG_PATH    ?= build/dev/config.yaml
 FRONTEND_DIR   := frontend
 IMAGE_LOCAL    := warehouse06:local
+BUILD_NETWORK  ?= default
 COMPOSE        := docker compose
 COMPOSE_PROD   := docker compose -f build/prod/docker.compose.example.yaml
 COMPOSE_RUN    := $(COMPOSE) run --rm --no-deps
@@ -58,7 +59,7 @@ docker-down: down
 
 .PHONY: build
 build: ## Build production Docker image (warehouse06:local)
-	docker build -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
+	docker build --network $(BUILD_NETWORK) -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
 
 IMAGE ?= $(IMAGE_LOCAL)
 
@@ -97,7 +98,7 @@ vendor-emulator-check: ensure-built ## Verify vendor.lock.json matches upstream
 
 # ── Go checks (plain commands; run inside the dev container or in CI) ────────
 
-GOLANGCI_LINT_VERSION := v2.13.2
+GOLANGCI_LINT_VERSION := v2.14.0
 
 .PHONY: fmt
 fmt: ## Check gofmt formatting
@@ -159,11 +160,11 @@ e2e: ## Playwright e2e tests in container (mocked API, no backend needed)
 
 .PHONY: ci
 ci: ensure-built ## Full CI pipeline in containers
-	$(FRONTEND_RUN) 'npm ci && npm run typecheck && npm run lint && npm test && npm run build'
+	$(FRONTEND_RUN) 'npm ci && npm run typecheck && npm run lint && npm test && npm run test:vendor && npm run build'
 	$(BACKEND_RUN) 'make fmt vet go-lint go-test'
 	$(MAKE) e2e
 	$(MAKE) vendor-emulator-check
-	docker build -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
+	docker build --network $(BUILD_NETWORK) -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
 	$(MAKE) smoke
 
 # ── Clean ─────────────────────────────────────────────────────────────────────
