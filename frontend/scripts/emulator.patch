@@ -1,0 +1,105 @@
+--- a/src/main.js
++++ b/src/main.js
+@@ -32,10 +32,40 @@
+ 
+     fullscreener = new FullScreener();
+     
+-    zip.workerScriptsPath = './zip.js/WebContent/';
++    zip.configure({
++        workerURI: new URL('./zip.js/zip-web-worker.js', location.href).href,
++        wasmURI: new URL('./zip.js/zip-module.wasm', location.href).href
++    });
+     memory = new Memory();
+     keyboard2 = new Keyboard();
+     keyboard2.Hook();
++
++    var embedded = location.search && location.search.charAt(1) === 'i';
++    if (embedded) {
++        window.__v06EmbeddedInputBridge = true;
++        window.addEventListener('message', function(e) {
++            var d = e.data;
++            if (!d || d.cmd !== 'input') return;
++            var keycode = d.keycode;
++            if (d.subcmd === 'keydown') {
++                if (keycode === 122 || keycode === 123) {
++                    keyboard2.onreset(keycode === 122);
++                } else {
++                    keyboard2.applyKey(keycode, false);
++                }
++            } else if (d.subcmd === 'keyup') {
++                if (keycode !== 122 && keycode !== 123) {
++                    keyboard2.applyKey(keycode, true);
++                }
++            }
++        });
++        try {
++            window.parent.postMessage({type: "ready"}, "*");
++        } catch (err) {
++            console.log(err);
++        }
++    }
++
+     timer = new I8253();
+     ay = new AY();
+     var fd1793 = Floppy().FD1793;
+@@ -208,6 +238,7 @@
+         // callback_error
+         function() {
+             console.log("Cannot load bootloader, not a problem for loading roms");
++            sideloadOrLoad();
+         }
+     );
+     
+--- a/src/rom.js
++++ b/src/rom.js
+@@ -94,9 +94,9 @@
+         } else {
+             console.log("Unzipping ", entry.filename);
+             let writer = new zip.BlobWriter("application/octet-stream");
+-            entry.getData(writer, function(data) {
++            entry.getData(writer).then(function(data) {
+                 readData(data, callback, start);
+-            });
++            }).catch(callback_error);
+         }
+     };
+ 
+@@ -262,8 +262,8 @@
+     };
+ 
+     var tryUnzip = function(url, blob, callback) {
+-        zip.createReader(new zip.BlobReader(blob), function(reader) {
+-                reader.getEntries(function(entries) {
++        var reader = new zip.ZipReader(new zip.BlobReader(blob));
++        reader.getEntries().then(function(entries) {
+                     if (entries.length) {
+                         var validlist = [];
+                         for (var i = 0; i < entries.length; i++) {
+@@ -276,9 +276,8 @@
+                             createChooser(entries);
+                         }
+                     }
+-                });
+-            },
+-            function(error) {
++            }).catch(function(error) {
++                reader.close();
+                 console.log("unzip", error, " - trying as rom or fdd");
+                 if (url.toLowerCase().endsWith("fdd")) {
+                     readData(blob, callback_fdd, 0);
+@@ -323,6 +322,7 @@
+ 
+     var initDrop = function(inputs) {
+         // a message listener for loading from pretty assembler
++        if (!window.__v06EmbeddedInputBridge) {
+         window.addEventListener("message", (e) => {
+             const {cmd, file} = e.data;
+             if (cmd === "loadfile") {
+@@ -386,6 +386,7 @@
+                 }
+             }
+         });
++        }
+ 
+         for (let inputId in inputs) {
+             let target = document.getElementById(inputs[inputId]);

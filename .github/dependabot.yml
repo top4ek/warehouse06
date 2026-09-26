@@ -19,5 +19,6 @@ updates:
     directories:
       - /build/dev
       - /build/prod
+      - /
     schedule:
       interval: weekly

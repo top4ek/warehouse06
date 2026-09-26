@@ -12,10 +12,10 @@ WARNING: Neuroslop ahead.
 
 | Layer | Technologies |
 |-------|--------------|
-| Backend | Go 1.26, chi, SQLite (FTS5), goldmark, bluemonday |
+| Backend | Go 1.27.1, chi, SQLite (FTS5), goldmark, bluemonday |
 | Frontend | React 19, TypeScript, Vite, Ant Design |
 | Emulator | [vector06js](https://github.com/svofski/vector06js) — vendored in `frontend/emulator-src/`, bundled at build time |
-| Containers | Podman/Docker, reflex (dev) |
+| Containers | Podman/Docker, Alpine 3.24.2; Debian 13 (E2E); Node.js 24.21.0 LTS; reflex (dev) |
 
 ## Repository layout
 
@@ -142,7 +142,13 @@ make vendor-emulator                  # use refs from vendor.lock.json
 make vendor-emulator REF=<sha>        # bump vector06js to a commit
 ```
 
-Commit `emulator-src/` and `vendor.lock.json`. Do not commit `public/emulator/`.
+Vendoring applies the local iframe/input and zip.js integration patch from
+`frontend/scripts/emulator.patch`, and generates bin2wav types from
+`frontend/scripts/bin2wav-tape.d.ts`. The check compares the complete generated
+contents, including stale files, against the pinned upstream sources.
+
+Commit vendored sources, the lock and adaptation changes together. Do not commit
+`public/emulator/`.
 
 ## Tests
 
@@ -159,7 +165,11 @@ CGO_ENABLED=1 go test -tags sqlite_fts5 ./...
 
 Running bare `go test ./...` without these flags will fail on FTS5 schema initialization.
 
-CI (`.github/workflows/ci.yml`): `make ci` in Docker; on `main` — Docker image push.
+CI (`.github/workflows/ci.yml`) runs Go and frontend checks on GitHub runners,
+Playwright E2E, vendor verification, production image build, Trivy scan and smoke test.
+Successful pushes to `master` publish the Docker image. `make ci` runs the same
+build and test checks locally in containers; vulnerability checks run separately
+with `make vuln`, `npm audit` and Trivy.
 
 ## Make targets (summary)
 

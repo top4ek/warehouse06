@@ -94,9 +94,9 @@ function Loader(url, callback, callback_error, callback_fdd, callback_basic, par
         } else {
             console.log("Unzipping ", entry.filename);
             let writer = new zip.BlobWriter("application/octet-stream");
-            entry.getData(writer, function(data) {
+            entry.getData(writer).then(function(data) {
                 readData(data, callback, start);
-            });
+            }).catch(callback_error);
         }
     };
 
@@ -262,8 +262,8 @@ function Loader(url, callback, callback_error, callback_fdd, callback_basic, par
     };
 
     var tryUnzip = function(url, blob, callback) {
-        zip.createReader(new zip.BlobReader(blob), function(reader) {
-                reader.getEntries(function(entries) {
+        var reader = new zip.ZipReader(new zip.BlobReader(blob));
+        reader.getEntries().then(function(entries) {
                     if (entries.length) {
                         var validlist = [];
                         for (var i = 0; i < entries.length; i++) {
@@ -276,9 +276,8 @@ function Loader(url, callback, callback_error, callback_fdd, callback_basic, par
                             createChooser(entries);
                         }
                     }
-                });
-            },
-            function(error) {
+            }).catch(function(error) {
+                reader.close();
                 console.log("unzip", error, " - trying as rom or fdd");
                 if (url.toLowerCase().endsWith("fdd")) {
                     readData(blob, callback_fdd, 0);

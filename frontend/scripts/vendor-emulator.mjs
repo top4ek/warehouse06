@@ -44,10 +44,10 @@ function git(args, cwd) {
 function shallowClone(repo, ref, tmpRoot) {
   const dir = path.join(tmpRoot, repo.replace(/[^\w]+/g, "_"));
   fs.mkdirSync(dir, { recursive: true });
-  git(["init"], dir);
+  git(["init", "--quiet"], dir);
   git(["remote", "add", "origin", repo], dir);
-  git(["fetch", "--depth", "1", "origin", ref], dir);
-  git(["checkout", "FETCH_HEAD"], dir);
+  git(["fetch", "--quiet", "--depth", "1", "origin", ref], dir);
+  git(["-c", "advice.detachedHead=false", "checkout", "--quiet", "FETCH_HEAD"], dir);
   return { dir, sha: git(["rev-parse", "HEAD"], dir) };
 }
 
@@ -56,14 +56,16 @@ function copyFile(from, to) {
   fs.copyFileSync(from, to);
 }
 
-function copyGlob(srcRoot, pattern, destRoot) {
+export function copyGlob(srcRoot, pattern, destRoot) {
   const [dirPart, filePart] = pattern.includes("/")
     ? [path.dirname(pattern), path.basename(pattern)]
     : [".", pattern];
   const absDir = path.join(srcRoot, dirPart);
   if (!fs.existsSync(absDir)) return;
+  const matcher = new RegExp(`^${filePart.split("*").map((part) =>
+    part.replace(/[.+?^${}()|[\]\\]/g, "\\$&")).join(".*")}$`);
   for (const name of fs.readdirSync(absDir)) {
-    if (filePart === "*" || name === filePart) {
+    if (matcher.test(name)) {
       const src = path.join(absDir, name);
       if (fs.statSync(src).isFile()) {
         copyFile(src, path.join(destRoot, dirPart, name));
@@ -81,6 +83,8 @@ function copyTree(from, to, filter) {
     const dst = path.join(to, entry.name);
     if (entry.isDirectory()) {
       copyTree(src, dst, filter);
+    } else if (entry.isSymbolicLink()) {
+      fs.symlinkSync(fs.readlinkSync(src), dst);
     } else {
       fs.copyFileSync(src, dst);
     }
@@ -105,7 +109,7 @@ function vendorVector06js(srcRoot, destRoot) {
   const body = raw.slice(bodyIdx);
   const cleaned = body.replace(/\s*<script[^>]*>[\s\S]*?<\/script>\s*/g, "\n");
   const scripts = `    <script src="./dist/emulator.pre-zip.bundle.js"></script>
-    <script src="./zip.js/WebContent/zip.js"></script>
+    <script src="./zip.js/zip.js"></script>
     <script src="./dist/emulator.post-zip.bundle.js"></script>
 `;
   const bodyClose = cleaned.lastIndexOf("</body>");
@@ -125,10 +129,11 @@ function vendorI8080(srcRoot, destRoot) {
 
 function vendorZipJs(srcRoot, destRoot) {
   copyTree(
-    path.join(srcRoot, "WebContent"),
-    path.join(destRoot, "zip.js", "WebContent"),
-    (name) => name !== "tests",
+    path.join(srcRoot, "dist"),
+    path.join(destRoot, "zip.js"),
+    (name) => ["zip.js", "zip-web-worker.js", "zip-module.wasm"].includes(name),
   );
+  copyFile(path.join(srcRoot, "LICENSE"), path.join(destRoot, "zip.js", "LICENSE"));
 }
 
 // bin2wav's tape.js/makewav.js are pure-JS but CommonJS; adapt them to ESM so
@@ -189,61 +194,86 @@ function vendorBin2wav(srcRoot, destRoot) {
     "tape.js",
   );
   fs.writeFileSync(path.join(destRoot, "tape.js"), tapeHeader + tape);
+  copyFile(path.join(__dirname, "bin2wav-tape.d.ts"), path.join(destRoot, "tape.d.ts"));
+}
+
+// Only these paths are generated. README and vendor.lock.json are maintained separately.
+const MANAGED_PATHS = ["src", "i8080-js", "zip.js", "wav.js", "index.html",
+  "cassette-32x32.png", "diskette-32x32.png", "omg-cat.png", ...VECTOR06JS_DATA_DIRS];
+
+export function treeDifferences(expected, actual) {
+  const differences = [];
+  function visit(relative) {
+    const left = path.join(expected, relative);
+    const right = path.join(actual, relative);
+    if (!fs.existsSync(left) || !fs.existsSync(right)) {
+      differences.push(relative);
+      return;
+    }
+    const leftType = fs.lstatSync(left);
+    const rightType = fs.lstatSync(right);
+    if (leftType.isSymbolicLink() || rightType.isSymbolicLink()) {
+      if (!leftType.isSymbolicLink() || !rightType.isSymbolicLink() ||
+          fs.readlinkSync(left) !== fs.readlinkSync(right)) differences.push(relative);
+    } else if (leftType.isDirectory() && rightType.isDirectory()) {
+      for (const name of new Set([...fs.readdirSync(left), ...fs.readdirSync(right)])) {
+        visit(path.join(relative, name));
+      }
+    } else if (leftType.isFile() && rightType.isFile()) {
+      if (!fs.readFileSync(left).equals(fs.readFileSync(right))) differences.push(relative);
+    } else differences.push(relative);
+  }
+  visit("");
+  return differences.sort();
+}
+
+export function replaceTree(from, to) {
+  fs.rmSync(to, { recursive: true, force: true });
+  if (fs.statSync(from).isDirectory()) copyTree(from, to);
+  else copyFile(from, to);
 }
 
 function main() {
   const args = parseArgs(process.argv.slice(2));
   const lock = readLock();
-
-  if (args.ref) {
-    lock.vector06js.ref = args.ref;
-  }
+  if (args.ref) lock.vector06js.ref = args.ref;
 
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "warehouse06-vendor-"));
   try {
+    const staged = path.join(tmp, "emulator-src");
+    const stagedBin2wav = path.join(tmp, "bin2wav");
     const results = {};
-
-    const v06 = shallowClone(lock.vector06js.repo, lock.vector06js.ref, tmp);
-    results.vector06js = v06.sha;
-    if (!args.check) vendorVector06js(v06.dir, destDir);
-
-    const i8080 = shallowClone(lock["i8080-js"].repo, lock["i8080-js"].ref, tmp);
-    results["i8080-js"] = i8080.sha;
-    if (!args.check) vendorI8080(i8080.dir, destDir);
-
-    const zip = shallowClone(lock["zip.js"].repo, lock["zip.js"].ref, tmp);
-    results["zip.js"] = zip.sha;
-    if (!args.check) vendorZipJs(zip.dir, destDir);
-
-    const bin2wav = shallowClone(lock["bin2wav"].repo, lock["bin2wav"].ref, tmp);
-    results["bin2wav"] = bin2wav.sha;
-    if (!args.check) vendorBin2wav(bin2wav.dir, BIN2WAV_DEST);
-
-    lock.vector06js.ref = results.vector06js;
-    lock["i8080-js"].ref = results["i8080-js"];
-    lock["zip.js"].ref = results["zip.js"];
-    lock["bin2wav"].ref = results["bin2wav"];
+    for (const name of Object.keys(lock)) {
+      const source = shallowClone(lock[name].repo, lock[name].ref, tmp);
+      results[name] = source.sha;
+      if (name === "vector06js") vendorVector06js(source.dir, staged);
+      else if (name === "i8080-js") vendorI8080(source.dir, staged);
+      else if (name === "zip.js") vendorZipJs(source.dir, staged);
+      else if (name === "bin2wav") vendorBin2wav(source.dir, stagedBin2wav);
+      else throw new Error(`Unknown vendor: ${name}`);
+    }
+    // Fail on upstream drift before replacing any files in the working tree.
+    execFileSync("git", ["apply", "--no-index", path.join(__dirname, "emulator.patch")], { cwd: staged });
 
     if (args.check) {
-      const current = readLock();
-      const drift = Object.keys(results).filter((k) => {
-        const key = k === "vector06js" ? "vector06js" : k;
-        return current[key].ref !== results[k];
-      });
-      if (drift.length) {
-        console.error("vendor.lock.json is stale for:", drift.join(", "));
-        process.exit(1);
+      const differences = Object.keys(results).filter((name) => lock[name].ref !== results[name]);
+      for (const name of MANAGED_PATHS) {
+        differences.push(...treeDifferences(path.join(staged, name), path.join(destDir, name))
+          .map((relative) => path.join(name, relative)));
       }
-      console.log("vendor.lock.json matches upstream refs.");
+      differences.push(...treeDifferences(stagedBin2wav, BIN2WAV_DEST).map((name) => `bin2wav/${name}`));
+      if (differences.length) throw new Error(`Vendored files differ from pinned sources and adaptations:\n${differences.join("\n")}`);
+      console.log("Vendored files match pinned sources and adaptations.");
       return;
     }
-
+    for (const name of MANAGED_PATHS) replaceTree(path.join(staged, name), path.join(destDir, name));
+    replaceTree(stagedBin2wav, BIN2WAV_DEST);
+    for (const name of Object.keys(results)) lock[name].ref = results[name];
     writeLock(lock);
-    console.log("Vendored emulator sources → emulator-src/");
-    console.log("Updated vendor.lock.json:", results);
+    console.log("Updated vendored emulator:", results);
   } finally {
     fs.rmSync(tmp, { recursive: true, force: true });
   }
 }
 
-main();
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) main();
