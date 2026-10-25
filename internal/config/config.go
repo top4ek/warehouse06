@@ -19,6 +19,7 @@ type Config struct {
 	Server     `yaml:"server"`
 	Database   `yaml:"database"`
 	Sync       `yaml:"sync"`
+	Gopher     Gopher `yaml:"gopher"`
 }
 
 type Server struct {
@@ -32,6 +33,13 @@ type Database struct {
 
 type Sync struct {
 	IntervalHours int `yaml:"interval_hours" env:"SYNC_INTERVAL_HOURS" env-default:"0"`
+}
+
+type Gopher struct {
+	Enabled    bool   `yaml:"enabled" env:"GOPHER_ENABLED" env-default:"true"`
+	ListenAddr string `yaml:"listen_addr" env:"GOPHER_LISTEN_ADDR" env-default:":7070"`
+	Host       string `yaml:"host" env:"GOPHER_HOST" env-default:"localhost"`
+	Port       int    `yaml:"port" env:"GOPHER_PORT" env-default:"7070"`
 }
 
 // SyncInterval returns the periodic sync interval. Zero means startup-only sync.
@@ -80,6 +88,10 @@ func MustLoad() *Config {
 		"SERVER_PORT",
 		"DATABASE_DSN",
 		"SYNC_INTERVAL_HOURS",
+		"GOPHER_ENABLED",
+		"GOPHER_LISTEN_ADDR",
+		"GOPHER_HOST",
+		"GOPHER_PORT",
 	)
 	defer restoreEnv()
 

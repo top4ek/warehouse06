@@ -43,6 +43,7 @@ docker-up: up
 
 .PHONY: up-build
 up-build: setup ## docker compose up --build
+	$(COMPOSE) build --pull backend
 	$(COMPOSE) up --build
 
 .PHONY: docker-up-build
@@ -59,7 +60,7 @@ docker-down: down
 
 .PHONY: build
 build: ## Build production Docker image (warehouse06:local)
-	docker build --network $(BUILD_NETWORK) -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
+	docker build --pull --network $(BUILD_NETWORK) -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
 
 IMAGE ?= $(IMAGE_LOCAL)
 
@@ -77,6 +78,7 @@ smoke: ## Run the built image (IMAGE=<tag>) and wait until its healthcheck passe
 
 .PHONY: prod
 prod: setup-prod ## Production compose up --build
+	$(COMPOSE_PROD) build --pull
 	$(COMPOSE_PROD) up --build
 
 .PHONY: setup-prod
@@ -98,7 +100,7 @@ vendor-emulator-check: ensure-built ## Verify vendor.lock.json matches upstream
 
 # ── Go checks (plain commands; run inside the dev container or in CI) ────────
 
-GOLANGCI_LINT_VERSION := v2.14.0
+GOLANGCI_LINT_VERSION := v2.15.0
 
 .PHONY: fmt
 fmt: ## Check gofmt formatting
@@ -128,7 +130,7 @@ vuln: ## Scan Go dependencies for known vulnerabilities
 
 .PHONY: ensure-built
 ensure-built:
-	$(COMPOSE) build backend
+	$(COMPOSE) build --pull backend
 
 .PHONY: test
 test: ensure-built ## Run Go tests (race) in dev backend container
@@ -164,7 +166,7 @@ ci: ensure-built ## Full CI pipeline in containers
 	$(BACKEND_RUN) 'make fmt vet go-lint go-test'
 	$(MAKE) e2e
 	$(MAKE) vendor-emulator-check
-	docker build --network $(BUILD_NETWORK) -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
+	docker build --pull --network $(BUILD_NETWORK) -f build/prod/Containerfile -t $(IMAGE_LOCAL) .
 	$(MAKE) smoke
 
 # ── Clean ─────────────────────────────────────────────────────────────────────

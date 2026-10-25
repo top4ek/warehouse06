@@ -7,3 +7,8 @@ database:
   dsn: file:/app/data/warehouse06.db?cache=shared&_journal_mode=WAL
 sync:
   interval_hours: 24
+gopher:
+  enabled: true
+  listen_addr: ":7070"
+  host: "localhost"
+  port: 70

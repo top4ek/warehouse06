@@ -1,14 +1,14 @@
-FROM golang:1.27.1-alpine3.24@sha256:8a5910f31396cd4d89662f56c68b3ae31d374308270a1c3bd96672ee5ed43414
+FROM golang:1.27-alpine
 
 WORKDIR /opt/app
-EXPOSE 8080
+EXPOSE 8080 7070
 
 ENV GO111MODULE=on
 ENV CGO_ENABLED=1
 
 # Prebuilt binary: compiling golangci-lint from source pulls hundreds of
 # modules and is flaky on this network (see docker-compose MTU note).
-COPY --from=golangci/golangci-lint:v2.14.0-alpine@sha256:25925c95ebdc7aee39ecc0e6f4f33ac27b9a91718bc65fdf18a1a5c4c9325ee4 /usr/bin/golangci-lint /go/bin/golangci-lint
+COPY --from=golangci/golangci-lint:v2.15.0-alpine@sha256:2ba875b990f1d8501ad4ec19be1ea0701e316ec3a4b764f7b129f62f01318bbf /usr/bin/golangci-lint /go/bin/golangci-lint
 
 RUN apk add --no-cache ca-certificates gcc musl-dev git curl make && \
     update-ca-certificates && \

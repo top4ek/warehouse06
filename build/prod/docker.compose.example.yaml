@@ -14,6 +14,7 @@ services:
       dockerfile: build/prod/Containerfile
     ports:
       - "8080:8080"
+      - "70:7070"
     volumes:
       - ../../storage:/app/storage
       - warehouse06-data:/app/data
