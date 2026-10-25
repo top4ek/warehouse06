@@ -12,10 +12,10 @@ import (
 	"warehouse06/internal/staticfiles"
 )
 
-func (s *Server) writeText(w io.Writer, source string) error {
+func textLines(source string) ([]string, error) {
 	doc, err := html.Parse(strings.NewReader(source))
 	if err != nil {
-		return err
+		return nil, err
 	}
 	var out strings.Builder
 	var visit func(*html.Node)
@@ -44,35 +44,65 @@ func (s *Server) writeText(w io.Writer, source string) error {
 		}
 	}
 	visit(doc)
-	var wire strings.Builder
+	var lines []string
 	blank := false
 	for _, line := range strings.Split(strings.TrimSpace(out.String()), "\n") {
 		line = strings.Join(strings.Fields(clean(line)), " ")
 		if line == "" {
 			if !blank {
-				wire.WriteString("\r\n")
+				lines = append(lines, "")
 			}
 			blank = true
 			continue
 		}
 		blank = false
-		// Wrap at 72 characters without splitting UTF-8; retain list markers.
-		for len([]rune(line)) > 72 {
-			runes := []rune(line)
-			end := 72
-			for i := 71; i > 0; i-- {
-				if unicode.IsSpace(runes[i]) {
-					end = i
-					break
-				}
+		lines = append(lines, line)
+	}
+	return lines, nil
+}
+
+// wrapTextLine scans each rune once, including exceptionally long words.
+func wrapTextLine(line string) []string {
+	runes := []rune(line)
+	var lines []string
+	for len(runes) > 72 {
+		end := 72
+		for i := 71; i > 0; i-- {
+			if unicode.IsSpace(runes[i]) {
+				end = i
+				break
 			}
-			writeTextLine(&wire, string(runes[:end]))
-			line = strings.TrimSpace(string(runes[end:]))
 		}
-		writeTextLine(&wire, line)
+		lines = append(lines, string(runes[:end]))
+		runes = runes[end:]
+		for len(runes) > 0 && unicode.IsSpace(runes[0]) {
+			runes = runes[1:]
+		}
+	}
+	return append(lines, string(runes))
+}
+
+// textSize measures the existing text presentation: UTF-8 plus wrapped CRLFs,
+// excluding protocol dot-stuffing and the final terminator.
+func textSize(lines []string) int {
+	size := 0
+	for _, line := range lines {
+		for _, wrapped := range wrapTextLine(line) {
+			size += len(wrapped) + 2
+		}
+	}
+	return size
+}
+
+func writeText(w io.Writer, lines []string) error {
+	var wire strings.Builder
+	for _, line := range lines {
+		for _, wrapped := range wrapTextLine(line) {
+			writeTextLine(&wire, wrapped)
+		}
 	}
 	wire.WriteString(".\r\n")
-	_, err = io.WriteString(w, wire.String())
+	_, err := io.WriteString(w, wire.String())
 	return err
 }
 

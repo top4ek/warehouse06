@@ -60,17 +60,21 @@ func (s *Server) menuLine(it item) (string, error) {
 	return line, nil
 }
 
+func displayWidth(r rune) int {
+	if k := width.LookupRune(r).Kind(); k == width.EastAsianWide || k == width.EastAsianFullwidth {
+		return 2
+	}
+	if unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Me, r) {
+		return 0
+	}
+	return 1
+}
+
 func displayName(value string) string {
 	var out strings.Builder
 	columns := 0
 	for _, r := range clean(value) {
-		n := 1
-		if unicode.Is(unicode.Mn, r) || unicode.Is(unicode.Me, r) {
-			n = 0
-		}
-		if k := width.LookupRune(r).Kind(); k == width.EastAsianWide || k == width.EastAsianFullwidth {
-			n = 2
-		}
+		n := displayWidth(r)
 		if columns+n > 72 {
 			break
 		}
@@ -190,7 +194,7 @@ func (s *Server) respond(ctx context.Context, w io.Writer, request string) error
 				return errors.New("stale selector")
 			}
 			if parts[0] == "t" {
-				return s.writeText(w, entry.ContentHTML)
+				return s.writeDocument(w, entry, q)
 			}
 			items, err = s.card(ctx, repo, entry)
 		case "p", "a", "g":
@@ -304,7 +308,7 @@ func (s *Server) respond(ctx context.Context, w io.Writer, request string) error
 				return e
 			}
 			if u.Path == "/text" {
-				return s.writeText(w, entry.ContentHTML)
+				return s.writeDocument(w, entry, q)
 			}
 			items, err = s.card(ctx, repo, entry)
 			u.Path = fmt.Sprintf("/e/%d", entry.ID)
@@ -336,7 +340,15 @@ func (s *Server) respond(ctx context.Context, w io.Writer, request string) error
 func (s *Server) card(ctx context.Context, repo *repository.SQLiteRepository, e *domain.Entry) ([]item, error) {
 	items := []item{{'i', e.Name, ""}}
 	items = append(items, s.descriptionItems(e.Description)...)
-	items = append(items, item{'0', "Полный текст", link("t", e.ID, e.Path)})
+	lines, err := textLines(e.ContentHTML)
+	if err != nil {
+		return nil, err
+	}
+	kind := byte('0')
+	if textSize(lines) > textPageSize {
+		kind = '1'
+	}
+	items = append(items, item{kind, "Полный текст", link("t", e.ID, e.Path)})
 	for _, a := range e.Authors {
 		items = append(items, item{'1', "Автор: " + a.Name, link("a", a.ID, a.DirectoryName)})
 	}
