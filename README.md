@@ -111,6 +111,13 @@ Connect to `gopher://localhost:7070/` in the development stack.
 Menus provide platforms, authors, tags, search, entry cards, full text and original file downloads.
 The service shares the current library catalog with HTTP and follows the same file extension restrictions.
 Menus and generated text use UTF-8; menus are paginated and limited to 32 KiB, 800 lines, 255 bytes per line and 72 display columns per label.
+Full texts larger than 24 KiB after conversion open directly on the first page of a text menu, with previous/next page and entry-card links at the bottom.
+Shorter texts retain the plain-text view.
+The threshold counts UTF-8 text after normalization and wrapping, including CRLF line endings but excluding dot-stuffing and the protocol terminator.
+Pages preserve paragraphs where possible, then sentences; a long sentence may exceed the 24 KiB target, but the complete menu must still fit the limits above.
+When a hard limit requires splitting a sentence, pages split at word boundaries, or at UTF-8 character boundaries for an oversized word.
+Page links use a zero-based `page` parameter and read the current catalog content on each request; updating a document can change its page boundaries.
+Legacy `/text?path=...` selectors follow the same rules, so a long document now returns a menu rather than plain text; reopen its entry card if an old bookmark declares text type `0`.
 
 For Lynx in a UTF-8 terminal, explicitly set the assumed document and display charsets:
 
