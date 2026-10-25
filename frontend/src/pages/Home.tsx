@@ -212,6 +212,10 @@ export default function Home() {
               <a href="/api/export/storage" download>
                 Files (ZIP)
               </a>
+              {" "}·{" "}
+              <a href={`gopher://${window.location.hostname}`}>
+                Gopher
+              </a>
             </>
           }
         />

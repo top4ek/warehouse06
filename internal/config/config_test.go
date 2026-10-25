@@ -46,6 +46,36 @@ func TestMustLoad_noConfigPathUsesEnvAndDefaults(t *testing.T) {
 	assert.Equal(t, "development", cfg.Env)
 }
 
+func TestMustLoad_gopherDefaults(t *testing.T) {
+	t.Setenv("CONFIG_PATH", "")
+	for _, key := range []string{"GOPHER_ENABLED", "GOPHER_LISTEN_ADDR", "GOPHER_HOST", "GOPHER_PORT"} {
+		t.Setenv(key, "")
+	}
+	cfg := MustLoad()
+	assert.True(t, cfg.Gopher.Enabled)
+	assert.Equal(t, ":7070", cfg.Gopher.ListenAddr)
+	assert.Equal(t, "localhost", cfg.Gopher.Host)
+	assert.Equal(t, 7070, cfg.Gopher.Port)
+}
+
+func TestMustLoad_gopherYAMLAndEnv(t *testing.T) {
+	path := filepath.Join(t.TempDir(), "config.yaml")
+	require.NoError(t, os.WriteFile(path, []byte("gopher:\n  enabled: true\n  listen_addr: 127.0.0.1:7071\n  host: library.example.org\n  port: 70\n"), 0o644))
+	t.Setenv("CONFIG_PATH", path)
+	for _, key := range []string{"GOPHER_ENABLED", "GOPHER_LISTEN_ADDR", "GOPHER_HOST", "GOPHER_PORT"} {
+		t.Setenv(key, "")
+	}
+	cfg := MustLoad()
+	assert.Equal(t, Gopher{Enabled: true, ListenAddr: "127.0.0.1:7071", Host: "library.example.org", Port: 70}, cfg.Gopher)
+
+	t.Setenv("GOPHER_ENABLED", "false")
+	t.Setenv("GOPHER_LISTEN_ADDR", ":7072")
+	t.Setenv("GOPHER_HOST", "other.example.org")
+	t.Setenv("GOPHER_PORT", "7073")
+	cfg = MustLoad()
+	assert.Equal(t, Gopher{Enabled: false, ListenAddr: ":7072", Host: "other.example.org", Port: 7073}, cfg.Gopher)
+}
+
 func TestMustLoad_yamlOnly(t *testing.T) {
 	t.Setenv("CONFIG_PATH", "")
 

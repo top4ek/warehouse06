@@ -15,6 +15,7 @@ jobs:
       - uses: actions/setup-go@v7.0.0
         with:
           go-version-file: go.mod
+          check-latest: true
 
       - name: Check formatting
         run: make fmt
@@ -36,6 +37,7 @@ jobs:
       - uses: actions/setup-go@v7.0.0
         with:
           go-version-file: go.mod
+          check-latest: true
 
       - name: Run tests (race)
         run: make go-test
@@ -48,6 +50,7 @@ jobs:
       - uses: actions/setup-go@v7.0.0
         with:
           go-version-file: go.mod
+          check-latest: true
 
       - name: govulncheck
         run: make vuln
@@ -62,7 +65,7 @@ jobs:
 
       - uses: actions/setup-node@v7.0.0
         with:
-          node-version: 24.21.0
+          node-version: 24.22.1
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -96,7 +99,7 @@ jobs:
 
       - uses: actions/setup-node@v7.0.0
         with:
-          node-version: 24.21.0
+          node-version: 24.22.1
           cache: npm
           cache-dependency-path: frontend/package-lock.json
 
@@ -130,6 +133,7 @@ jobs:
         with:
           context: .
           file: build/prod/Containerfile
+          pull: true
           push: false
           load: true
           build-args: |
@@ -168,6 +172,7 @@ jobs:
         with:
           context: .
           file: build/prod/Containerfile
+          pull: true
           push: true
           build-args: |
             GIT_COMMIT=${{ steps.version.outputs.short_sha }}

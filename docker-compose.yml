@@ -3,12 +3,10 @@ services:
     build:
       context: .
       dockerfile: build/dev/Containerfile
-      # Host network during build only: bridge-network MTU clamping breaks
-      # large module downloads on some setups (VPN hosts).
-      network: host
     working_dir: /opt/app
     ports:
       - "8080:8080"
+      - "7070:7070"
     volumes:
       - .:/opt/app
       - go-mod:/go/pkg/mod
@@ -20,7 +18,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    image: node:24.21.0-alpine3.24@sha256:ebfe2f90462722a7a4de65e91990e97fe0d401c70e0e762c5b53302f905ec1c1
+    image: node:24.22.1-alpine3.24@sha256:06d7adf3e0ef61a13f1d28682726366f97a15aa1888c934d3ecec86c33918b53
     working_dir: /opt/app/frontend
     command:
       - sh
@@ -46,7 +44,6 @@ services:
     build:
       context: .
       dockerfile: build/dev/e2e.Containerfile
-      network: host
     profiles:
       - e2e
     working_dir: /opt/app/frontend

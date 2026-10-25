@@ -2,6 +2,8 @@ package main
 
 import (
 	"context"
+	"errors"
+	"net"
 	"net/http"
 	"os"
 	"os/signal"
@@ -16,6 +18,7 @@ import (
 	"go.uber.org/zap"
 
 	"warehouse06/internal/config"
+	"warehouse06/internal/delivery/gopher"
 	delivery "warehouse06/internal/delivery/http"
 	"warehouse06/internal/parser"
 	"warehouse06/internal/repository"
@@ -126,6 +129,29 @@ func main() {
 		IdleTimeout:       120 * time.Second,
 	}
 
+	var gopherServer *gopher.Server
+	if cfg.Gopher.Enabled {
+		gopherServer, err = gopher.New(gopher.Config{
+			Host:       cfg.Gopher.Host,
+			Port:       cfg.Gopher.Port,
+			StorageDir: cfg.StorageDir,
+		}, holder, log)
+		if err != nil {
+			log.Fatal("invalid gopher configuration", zap.Error(err))
+		}
+		listener, err := (&net.ListenConfig{}).Listen(context.Background(), "tcp", cfg.Gopher.ListenAddr)
+		if err != nil {
+			log.Fatal("failed to listen for gopher", zap.Error(err))
+		}
+		defer func() { _ = gopherServer.Close() }()
+		go func() {
+			log.Info("starting gopher server", zap.String("address", cfg.Gopher.ListenAddr))
+			if err := gopherServer.Serve(listener); err != nil && !errors.Is(err, net.ErrClosed) {
+				log.Fatal("gopher server error", zap.Error(err))
+			}
+		}()
+	}
+
 	go func() {
 		log.Info("starting server", zap.Int("port", cfg.Port), zap.String("version", version))
 		if err := srv.ListenAndServe(); err != nil && err != http.ErrServerClosed {
@@ -139,6 +165,11 @@ func main() {
 	log.Info("shutting down server...")
 
 	cancelSync()
+	if gopherServer != nil {
+		if err := gopherServer.Close(); err != nil {
+			log.Error("failed to close gopher server", zap.Error(err))
+		}
+	}
 
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()

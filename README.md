@@ -12,10 +12,10 @@ WARNING: Neuroslop ahead.
 
 | Layer | Technologies |
 |-------|--------------|
-| Backend | Go 1.27.1, chi, SQLite (FTS5), goldmark, bluemonday |
+| Backend | Go 1.27, chi, SQLite (FTS5), goldmark, bluemonday |
 | Frontend | React 19, TypeScript, Vite, Ant Design |
 | Emulator | [vector06js](https://github.com/svofski/vector06js) — vendored in `frontend/emulator-src/`, bundled at build time |
-| Containers | Podman/Docker, Alpine 3.24.2; Debian 13 (E2E); Node.js 24.21.0 LTS; reflex (dev) |
+| Containers | Podman/Docker, Alpine 3.24.3; Debian 13 (E2E); Node.js 24.22.1 LTS; reflex (dev) |
 
 ## Repository layout
 
@@ -82,6 +82,8 @@ Production uses a persistent SQLite database in the `warehouse06-data` Docker vo
 
 The image is built from [`build/prod/Containerfile`](build/prod/Containerfile): Node frontend build → Go server build → Alpine runtime.
 
+Go stays on the `1.27` release line without a patch pin. Make build targets pull the latest base images; CI also checks for the latest Go 1.27 patch.
+
 ## Configuration
 
 Example YAML config: [`build/dev/config.yaml.example`](build/dev/config.yaml.example).
@@ -91,12 +93,45 @@ Example YAML config: [`build/dev/config.yaml.example`](build/dev/config.yaml.exa
 | `storage_dir` | Path to the content directory (default `storage`) |
 | `storage_url` | Git remote for periodic sync |
 | `server.port` | HTTP port (8080) |
+| `gopher.enabled` | Enable the read-only Gopher TCP service (default `true`, env `GOPHER_ENABLED`) |
+| `gopher.listen_addr` | Internal TCP bind address (default `:7070`, env `GOPHER_LISTEN_ADDR`) |
+| `gopher.host` | Public hostname advertised in menus (default `localhost`, env `GOPHER_HOST`) |
+| `gopher.port` | Public port advertised in menus (default `7070`, env `GOPHER_PORT`) |
 | `database.dsn` | SQLite DSN (`:memory:` or file path) |
 | `sync.interval_hours` | Sync interval in hours; `0` — startup only |
 
 Precedence: defaults → YAML → environment variables (env wins).
 
 To load a YAML file, set `CONFIG_PATH` to its path. If `CONFIG_PATH` is unset or points to a missing file, the app uses only defaults + environment variables.
+
+## Gopher
+
+Gopher is enabled by default in development and production. Set `gopher.enabled: false` or `GOPHER_ENABLED=false` to disable it.
+Connect to `gopher://localhost:7070/` in the development stack.
+Menus provide platforms, authors, tags, search, entry cards, full text and original file downloads.
+The service shares the current library catalog with HTTP and follows the same file extension restrictions.
+Menus and generated text use UTF-8; menus are paginated and limited to 32 KiB, 800 lines, 255 bytes per line and 72 display columns per label.
+
+For Lynx in a UTF-8 terminal, explicitly set the assumed document and display charsets:
+
+```sh
+lynx -assume_charset=UTF-8 -display_charset=UTF-8 gopher://localhost:7070/
+```
+
+Lynx's default assumed charset can garble Cyrillic Gopher menus even when the terminal uses UTF-8.
+
+For a public deployment, set `gopher.host` in `build/prod/config.yaml` to the hostname clients can reach. Production Compose publishes `70:7070` by default, and the sample config advertises port 70 while keeping `gopher.listen_addr: ":7070"`.
+The advertised public address is independent of the listener address.
+Long search queries use compact page links backed by an in-memory FIFO cache of 512 distinct long queries.
+Those links expire on restart or after eviction; the client receives an explicit search-expired error and can re-enter the query.
+Short search queries remain embedded in their page links.
+Requests must fit within 4096 bytes including CRLF and arrive within 60 seconds.
+Transfers refresh a 60-second write timeout for each chunk of at most 512 bytes, allowing downloads to continue beyond one minute.
+An enabled Gopher listener that cannot start causes the backend startup to fail.
+Gopher closes its connections during backend shutdown.
+
+This is a native Gopher TCP service; it does not expose Gopher menus over HTTP(S).
+Acceptance is covered by automated TCP tests; testing on a physical Vector-06C is outside the scope of this feature.
 
 ## API
 

@@ -8,3 +8,8 @@ database:
   dsn: ":memory:"
 sync:
   interval_hours: 0
+gopher:
+  enabled: true
+  listen_addr: ":7070"
+  host: "localhost"
+  port: 7070
