@@ -1,4 +1,4 @@
-FROM node:24.22.1-trixie@sha256:016f604a11c4c725f0a4c62e29ff11adab153d297bf97046c9bf2ddb9f1011d3
+FROM node:26.12.0-trixie@sha256:45a2bf9d9300e9cf47ecb375e38447c140c45ef5fbae869c430475b05b98d86e
 
 # Chromium + system deps for Playwright, baked into the image so e2e runs
 # offline. The playwright version must match @playwright/test in
