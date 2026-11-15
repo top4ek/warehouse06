@@ -12,10 +12,10 @@ WARNING: Neuroslop ahead.
 
 | Layer | Technologies |
 |-------|--------------|
-| Backend | Go 1.27, chi, SQLite (FTS5), goldmark, bluemonday |
+| Backend | Go 1.27.4, chi, SQLite (FTS5), goldmark, bluemonday |
 | Frontend | React 19, TypeScript, Vite, Ant Design |
 | Emulator | [vector06js](https://github.com/svofski/vector06js) — vendored in `frontend/emulator-src/`, bundled at build time |
-| Containers | Podman/Docker, Alpine 3.24.3; Debian 13 (E2E); Node.js 24.22.1 LTS; reflex (dev) |
+| Containers | Podman/Docker, Alpine 3.24.4; Debian 13 (E2E); Node.js 24.22.3 LTS; reflex (dev) |
 
 ## Repository layout
 
@@ -82,7 +82,35 @@ Production uses a persistent SQLite database in the `warehouse06-data` Docker vo
 
 The image is built from [`build/prod/Containerfile`](build/prod/Containerfile): Node frontend build → Go server build → Alpine runtime.
 
-Go stays on the `1.27` release line without a patch pin. Make build targets pull the latest base images; CI also checks for the latest Go 1.27 patch.
+Container images are not pinned by digest or software patch version:
+`golang:1.27-alpine` and `node:24-alpine` follow the latest patches in their
+supported software branches and the newest Alpine variant published upstream;
+`alpine:latest` follows the latest stable Alpine release. E2E uses
+`node:24-trixie` (Debian 13, the current stable Debian release), and the linter
+uses `golangci/golangci-lint:v2.15-alpine`. Build with `--pull` to refresh
+these moving tags; Make build targets already do this. CI checks for the
+latest Go 1.27 patch.
+
+### Dependency maintenance
+
+The November 2026 refresh includes the [Go 1.27.4](https://go.dev/doc/devel/release#go1.27.4),
+[Node 24.22.3](https://nodejs.org/en/blog/release/v24.22.3) and
+[Alpine 3.24.4](https://alpinelinux.org/posts/alpine-3.21.10-3.22.8-3.23.8-3.24.4-released/)
+security updates. Go module and npm lockfiles record the library updates;
+the emulator pins zip.js 2.25.0. Playwright 1.65.1 is kept aligned between
+the frontend package and E2E image.
+
+Supported compatible branches take precedence over the newest major:
+Node stays on 24 LTS, goldmark on v1, and YAML on the maintained
+`go.yaml.in/yaml/v3` path. `cleanenv` still requires the old YAML module
+transitively. TypeScript stays on 6.0 because the selected stable
+`typescript-eslint` does not support TypeScript 7.
+
+`npm audit` still reports seven moderate development-only findings through
+`typescript-eslint`'s minimatch dependency
+([GHSA-g3hv-75wg-m249](https://github.com/advisories/GHSA-g3hv-75wg-m249)).
+There is no compatible fixed stable release in that dependency chain;
+no out-of-range override or forced downgrade is applied.
 
 ## Configuration
 
@@ -212,6 +240,13 @@ Playwright E2E, vendor verification, production image build, Trivy scan and smok
 Successful pushes to `master` publish the Docker image. `make ci` runs the same
 build and test checks locally in containers; vulnerability checks run separately
 with `make vuln`, `npm audit` and Trivy.
+
+Known pre-existing limitation: staging database filename construction does
+not handle SQLite DSNs with query parameters (including the production
+example's `?_journal_mode=WAL`); indexing fails with `Invalid _journal:
+WAL.next`. This occurs with both old and refreshed images. The dependency
+refresh smoke check used an isolated file-backed database without query
+parameters; this limitation is not fixed by the upgrade.
 
 ## Make targets (summary)
 

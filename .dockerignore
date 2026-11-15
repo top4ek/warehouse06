@@ -1,4 +1,5 @@
 .git
+.codegraph
 .DS_Store
 .idea
 .vscode

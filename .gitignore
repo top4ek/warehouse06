@@ -8,6 +8,7 @@
 *.test
 .env
 .git
+.codegraph/
 .idea/
 .playwright-cli/
 build/dev/.env
