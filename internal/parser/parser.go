@@ -18,7 +18,7 @@ import (
 	"github.com/yuin/goldmark/parser"
 	"github.com/yuin/goldmark/renderer/html"
 	"go.uber.org/zap"
-	"gopkg.in/yaml.v3"
+	"go.yaml.in/yaml/v3"
 
 	"warehouse06/internal/domain"
 	"warehouse06/internal/htmlsanitize"
