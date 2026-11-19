@@ -91,6 +91,10 @@ uses `golangci/golangci-lint:v2.15-alpine`. Build with `--pull` to refresh
 these moving tags; Make build targets already do this. CI checks for the
 latest Go 1.27 patch.
 
+`make ci` also pulls the frontend image and rebuilds the E2E image before
+running browser tests, so cached images cannot retain browsers from an older
+Playwright version after a dependency update.
+
 ### Dependency maintenance
 
 The November 2026 refresh includes the [Go 1.27.4](https://go.dev/doc/devel/release#go1.27.4),
@@ -196,6 +200,12 @@ Static files:
 Each entry is a directory with a `README.md` (frontmatter + markdown). Top-level platforms include `vector06c`, `bk`, `rk86`, `authors`, …
 
 The syncer can pull updates from `storage_url` on startup (and on a schedule).
+
+`Added` / `Date added` uses the author date of the commit that first added the
+entry's README, following Git-detected renames and moves. Later edits do not
+change that date. Dates are recomputed when the catalog is rebuilt, including
+on server startup, so restarting an updated server corrects previously
+misdated entries. If Git history provides no date, the rebuild time is used.
 
 ## Vector-06C emulator
 

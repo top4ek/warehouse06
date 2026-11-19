@@ -158,10 +158,12 @@ fe-build: ## Frontend production build in container
 
 .PHONY: e2e
 e2e: ## Playwright e2e tests in container (mocked API, no backend needed)
+	$(COMPOSE) --profile e2e build --pull e2e
 	$(COMPOSE) --profile e2e run --rm e2e
 
 .PHONY: ci
 ci: ensure-built ## Full CI pipeline in containers
+	$(COMPOSE) pull frontend
 	$(FRONTEND_RUN) 'npm ci && npm run typecheck && npm run lint && npm test && npm run test:vendor && npm run build'
 	$(BACKEND_RUN) 'make fmt vet go-lint go-test'
 	$(MAKE) e2e
