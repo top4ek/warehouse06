@@ -1,4 +1,4 @@
-FROM node:24-trixie
+FROM node:26-trixie
 
 # Chromium + system deps for Playwright, baked into the image so e2e runs
 # offline. The playwright version must match @playwright/test in
